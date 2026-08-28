@@ -1,0 +1,47 @@
+<?php
+/**
+ * ARCHIVO: models/Area.php
+ * MODELO DE AREAS
+ */
+
+class Area {
+
+    public static function findAll(): array {
+        return db()->query("SELECT * FROM areas WHERE estado = 1 ORDER BY nombre")->fetchAll();
+    }
+
+    public static function findById(int $id): ?array {
+        $stmt = db()->prepare("SELECT * FROM areas WHERE id = :id LIMIT 1");
+        $stmt->execute([':id' => $id]);
+        $result = $stmt->fetch();
+        return $result ?: null;
+    }
+
+    public static function create(array $data): int {
+        $stmt = db()->prepare("INSERT INTO areas (nombre, descripcion) VALUES (:nombre, :descripcion)");
+        $stmt->execute([':nombre' => $data['nombre'], ':descripcion' => $data['descripcion'] ?? null]);
+        return (int) db()->lastInsertId();
+    }
+
+    public static function update(int $id, array $data): bool {
+        $stmt = db()->prepare("UPDATE areas SET nombre = :nombre, descripcion = :descripcion WHERE id = :id");
+        return $stmt->execute([':nombre' => $data['nombre'], ':descripcion' => $data['descripcion'] ?? null, ':id' => $id]);
+    }
+
+    public static function delete(int $id): bool {
+        $stmt = db()->prepare("UPDATE areas SET estado = 0 WHERE id = :id");
+        return $stmt->execute([':id' => $id]);
+    }
+
+    public static function existeNombre(string $nombre, ?int $excludeId = null): bool {
+        $sql = "SELECT COUNT(*) FROM areas WHERE nombre = :nombre";
+        $params = [':nombre' => $nombre];
+        if ($excludeId) {
+            $sql .= " AND id != :id";
+            $params[':id'] = $excludeId;
+        }
+        $stmt = db()->prepare($sql);
+        $stmt->execute($params);
+        return (int) $stmt->fetchColumn() > 0;
+    }
+}

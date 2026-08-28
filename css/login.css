@@ -1,0 +1,190 @@
+/* ============================================================
+   CSS LOGIN - SISTEMA DE ARCHIVO MUNICIPAL
+   ============================================================ */
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --primary: #1a3a5c;
+    --primary-dark: #0f2440;
+    --primary-light: #2a5a8c;
+    --accent: #c8a951;
+    --accent-dark: #b08f3a;
+    --bg: #f0f2f5;
+    --card: #ffffff;
+    --text: #1a1a2e;
+    --text-light: #6b7280;
+    --border: #d1d5db;
+    --success: #059669;
+    --warning: #d97706;
+    --danger: #dc2626;
+    --info: #2563eb;
+    --shadow: 0 4px 24px rgba(0,0,0,0.12);
+    --radius: 6px;
+}
+
+body.login-page {
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    background: var(--primary-dark);
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text);
+}
+
+.login-container {
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+}
+
+.login-card {
+    background: var(--card);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    padding: 40px 32px 32px;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.login-logo {
+    color: var(--primary);
+    margin-bottom: 16px;
+}
+
+.login-header h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+}
+
+.login-subtitle {
+    font-size: 13px;
+    color: var(--text-light);
+    line-height: 1.4;
+}
+
+.login-form .form-group {
+    margin-bottom: 18px;
+}
+
+.login-form label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 14px;
+    color: var(--text);
+    background: #fafbfc;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+}
+
+.login-form input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(26,58,92,0.1);
+    background: #fff;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    text-decoration: none;
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+}
+
+.btn-block {
+    width: 100%;
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.login-footer p {
+    font-size: 12px;
+    color: var(--text-light);
+}
+
+.login-footer .version {
+    font-size: 11px;
+    margin-top: 2px;
+    opacity: 0.7;
+}
+
+/* Alerts */
+.alert {
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    font-size: 13px;
+    margin-bottom: 16px;
+    border: 1px solid transparent;
+}
+
+.alert-danger {
+    background: #fef2f2;
+    color: #991b1b;
+    border-color: #fecaca;
+}
+
+.alert-success {
+    background: #f0fdf4;
+    color: #166534;
+    border-color: #bbf7d0;
+}
+
+.alert-warning {
+    background: #fffbeb;
+    color: #92400e;
+    border-color: #fde68a;
+}
+
+.alert-info {
+    background: #eff6ff;
+    color: #1e40af;
+    border-color: #bfdbfe;
+}
