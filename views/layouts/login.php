@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesion - <?= SITE_NAME ?></title>
+    <title>Iniciar Sesión - <?= SITE_NAME ?></title>
     <link rel="stylesheet" href="<?= SITE_URL ?>/css/login.css">
 </head>
 <body class="login-page">
@@ -22,7 +22,7 @@
                     </svg>
                 </div>
                 <h1><?= sanitize(SITE_NAME) ?></h1>
-                <p class="login-subtitle">Sistema Integral de Gestion y Control<br>de Archivo Fisico Municipal</p>
+                <p class="login-subtitle">Sistema Integral de Gestión y Control<br>de Archivo Físico Municipal</p>
             </div>
 
             <?php $flash = getFlash(); if ($flash): ?>
@@ -45,9 +45,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Contrasena</label>
+                    <label for="password">Contraseña</label>
                     <input type="password" id="password" name="password" required
-                           placeholder="Ingrese su contrasena">
+                           placeholder="Ingrese su contraseña">
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-block">
@@ -56,7 +56,7 @@
                         <polyline points="10 17 15 12 10 7"/>
                         <line x1="15" y1="12" x2="3" y2="12"/>
                     </svg>
-                    Iniciar Sesion
+                    Iniciar Sesión
                 </button>
             </form>
 

@@ -39,10 +39,10 @@ ob_start();
                     <option value="">Todos los estados</option>
                     <option value="disponible" <?= getQuery('estado') === 'disponible' ? 'selected' : '' ?>>Disponible</option>
                     <option value="prestado" <?= getQuery('estado') === 'prestado' ? 'selected' : '' ?>>Prestado</option>
-                    <option value="en_revision" <?= getQuery('estado') === 'en_revision' ? 'selected' : '' ?>>En Revision</option>
+                    <option value="en_revision" <?= getQuery('estado') === 'en_revision' ? 'selected' : '' ?>>En Revisión</option>
                     <option value="inactivo" <?= getQuery('estado') === 'inactivo' ? 'selected' : '' ?>>Inactivo</option>
                 </select>
-                <input type="number" name="anio" class="form-control" placeholder="Anio" style="max-width:100px;"
+                <input type="number" name="anio" class="form-control" placeholder="Año" style="max-width:100px;"
                        value="<?= sanitize(getQuery('anio')) ?>">
                 <button type="submit" class="btn btn-primary btn-sm">Filtrar</button>
             </div>
@@ -58,14 +58,14 @@ ob_start();
             <table>
                 <thead>
                     <tr>
-                        <th>Codigo</th>
-                        <th>Anio</th>
-                        <th>Area</th>
+                        <th>Código</th>
+                        <th>Año</th>
+                        <th>Área</th>
                         <th>Tipo</th>
                         <th>Asunto</th>
                         <th>Folios</th>
                         <th>Estado</th>
-                        <th>Ubicacion</th>
+                        <th>Ubicación</th>
                         <th></th>
                     </tr>
                 </thead>

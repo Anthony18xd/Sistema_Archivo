@@ -70,14 +70,14 @@ if (!Auth::check()) {
                     <span>Inventario</span>
                 </a>
 
-                <div class="nav-section">PRESTAMOS</div>
+                <div class="nav-section">PRÉSTAMOS</div>
 
                 <a href="<?= SITE_URL ?>/prestamos/registrar.php" class="nav-item <?= basename($_SERVER['SCRIPT_NAME']) === 'registrar.php' && strpos($_SERVER['SCRIPT_NAME'], 'prestamos') !== false ? 'active' : '' ?>">
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="9 11 12 14 22 4"/>
                         <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
                     </svg>
-                    <span>Registrar Prestamo</span>
+                    <span>Registrar Préstamo</span>
                 </a>
 
                 <a href="<?= SITE_URL ?>/prestamos/devolver.php" class="nav-item <?= basename($_SERVER['SCRIPT_NAME']) === 'devolver.php' ? 'active' : '' ?>">
@@ -92,7 +92,7 @@ if (!Auth::check()) {
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
                     </svg>
-                    <span>Historial Prestamos</span>
+                    <span>Historial Préstamos</span>
                 </a>
                 <?php endif; ?>
 
@@ -107,7 +107,7 @@ if (!Auth::check()) {
                 </a>
 
                 <?php if (Auth::isAdmin()): ?>
-                <div class="nav-section">ADMINISTRACION</div>
+                <div class="nav-section">ADMINISTRACIÓN</div>
 
                 <a href="<?= SITE_URL ?>/usuarios/listar.php" class="nav-item <?= basename($_SERVER['SCRIPT_NAME']) === 'listar.php' && strpos($_SERVER['SCRIPT_NAME'], 'usuarios') !== false ? 'active' : '' ?>">
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
@@ -139,7 +139,7 @@ if (!Auth::check()) {
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                     </svg>
-                    <span>Auditoria</span>
+                    <span>Auditoría</span>
                 </a>
                 <?php endif; ?>
             </nav>
@@ -164,7 +164,7 @@ if (!Auth::check()) {
                         <span class="user-name"><?= sanitize(Auth::fullName()) ?></span>
                         <span class="user-role"><?= sanitize(Auth::rol()) ?></span>
                     </div>
-                    <a href="<?= SITE_URL ?>/auth/logout.php" class="btn-logout" title="Cerrar sesion">
+                    <a href="<?= SITE_URL ?>/auth/logout.php" class="btn-logout" title="Cerrar sesión">
                         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                             <polyline points="16 17 21 12 16 7"/>

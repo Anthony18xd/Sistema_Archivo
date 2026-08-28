@@ -14,16 +14,16 @@ if ($filtroEstado) $filtros['estado'] = $filtroEstado;
 
 $prestamos = Prestamo::buscar($filtros, 50, 0);
 
-$pageTitle = 'Historial de Prestamos';
+$pageTitle = 'Historial de Préstamos';
 ob_start();
 ?>
 
 <div class="card">
     <div class="card-header">
-        <h3>Prestamos</h3>
+        <h3>Préstamos</h3>
         <?php if (Auth::canWrite()): ?>
         <div>
-            <a href="<?= SITE_URL ?>/prestamos/registrar.php" class="btn btn-sm btn-primary">+ Nuevo Prestamo</a>
+            <a href="<?= SITE_URL ?>/prestamos/registrar.php" class="btn btn-sm btn-primary">+ Nuevo Préstamo</a>
             <a href="<?= SITE_URL ?>/prestamos/devolver.php" class="btn btn-sm btn-success">Devolver</a>
         </div>
         <?php endif; ?>
@@ -39,7 +39,7 @@ ob_start();
     <div class="card-body" style="padding:0;">
         <?php if (empty($prestamos)): ?>
             <div class="empty-state">
-                <p>No hay prestamos registrados.</p>
+                <p>No hay préstamos registrados.</p>
             </div>
         <?php else: ?>
         <div class="table-wrapper">
@@ -50,10 +50,10 @@ ob_start();
                         <th>Documento</th>
                         <th>Solicitante</th>
                         <th>DNI</th>
-                        <th>Area</th>
+                        <th>Área</th>
                         <th>Fecha Salida</th>
-                        <th>Devolucion Est.</th>
-                        <th>Devolucion Real</th>
+                        <th>Devolución Est.</th>
+                        <th>Devolución Real</th>
                         <th>Estado</th>
                         <th></th>
                     </tr>

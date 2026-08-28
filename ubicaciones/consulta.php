@@ -28,7 +28,7 @@ ob_start();
 
 <div class="card">
     <div class="card-header">
-        <h3>Ubicaciones Fisicas del Archivo</h3>
+        <h3>Ubicaciones Físicas del Archivo</h3>
     </div>
     <div class="card-body">
         <form method="GET" action="">
@@ -78,7 +78,7 @@ ob_start();
                         <th>Estante</th>
                         <th>Nivel</th>
                         <th>Caja</th>
-                        <th>Codigo</th>
+                        <th>Código</th>
                         <th>Capacidad</th>
                     </tr>
                 </thead>

@@ -35,14 +35,14 @@ ob_start();
                     <line x1="16" y1="2" x2="16" y2="6"/>
                     <line x1="8" y1="2" x2="8" y2="6"/>
                 </svg>
-                <strong>Por Anio</strong>
+                <strong>Por Año</strong>
             </a>
             <a href="?tipo=por_area" class="quick-action">
                 <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                     <circle cx="9" cy="7" r="4"/>
                 </svg>
-                <strong>Por Area</strong>
+                <strong>Por Área</strong>
             </a>
             <a href="?tipo=por_tipo" class="quick-action">
                 <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
@@ -56,7 +56,7 @@ ob_start();
                     <polyline points="9 11 12 14 22 4"/>
                     <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
                 </svg>
-                <strong>Prestamos</strong>
+                <strong>Préstamos</strong>
             </a>
             <a href="?tipo=vencidos" class="quick-action">
                 <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
@@ -64,14 +64,14 @@ ob_start();
                     <line x1="12" y1="8" x2="12" y2="12"/>
                     <line x1="12" y1="16" x2="12.01" y2="16"/>
                 </svg>
-                <strong>Prestamos Vencidos</strong>
+                <strong>Préstamos Vencidos</strong>
             </a>
             <a href="?tipo=ubicacion" class="quick-action">
                 <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                     <circle cx="12" cy="10" r="3"/>
                 </svg>
-                <strong>Por Ubicacion</strong>
+                <strong>Por Ubicación</strong>
             </a>
         </div>
     </div>
@@ -101,13 +101,13 @@ if ($tipo):
 <?php elseif ($tipo === 'por_anio'): ?>
 <div class="card" style="margin-top:16px;">
     <div class="card-header">
-        <h3>Reporte: Documentos por Anio</h3>
+        <h3>Reporte: Documentos por Año</h3>
         <button onclick="window.print()" class="btn btn-sm btn-outline">Imprimir</button>
     </div>
     <div class="card-body" style="padding:0;">
         <div class="table-wrapper">
             <table>
-                <thead><tr><th>Anio</th><th style="text-align:right;">Cantidad</th></tr></thead>
+                <thead><tr><th>Año</th><th style="text-align:right;">Cantidad</th></tr></thead>
                 <tbody>
                 <?php foreach ($stats['por_anio'] as $a): ?>
                 <tr><td><?= sanitize($a['anio']) ?></td><td style="text-align:right;font-weight:600;"><?= formatNumber((int)$a['total']) ?></td></tr>
@@ -121,13 +121,13 @@ if ($tipo):
 <?php elseif ($tipo === 'por_area'): ?>
 <div class="card" style="margin-top:16px;">
     <div class="card-header">
-        <h3>Reporte: Documentos por Area Emisora</h3>
+        <h3>Reporte: Documentos por Área Emisora</h3>
         <button onclick="window.print()" class="btn btn-sm btn-outline">Imprimir</button>
     </div>
     <div class="card-body" style="padding:0;">
         <div class="table-wrapper">
             <table>
-                <thead><tr><th>Area</th><th style="text-align:right;">Cantidad</th></tr></thead>
+                <thead><tr><th>Área</th><th style="text-align:right;">Cantidad</th></tr></thead>
                 <tbody>
                 <?php foreach ($stats['por_area'] as $a): ?>
                 <tr><td><?= sanitize($a['area']) ?></td><td style="text-align:right;font-weight:600;"><?= formatNumber((int)$a['total']) ?></td></tr>
@@ -161,16 +161,16 @@ if ($tipo):
 <?php elseif ($tipo === 'vencidos'): ?>
 <div class="card" style="margin-top:16px;">
     <div class="card-header">
-        <h3>Reporte: Prestamos Vencidos</h3>
+        <h3>Reporte: Préstamos Vencidos</h3>
         <button onclick="window.print()" class="btn btn-sm btn-outline">Imprimir</button>
     </div>
     <div class="card-body" style="padding:0;">
         <?php if (empty($vencidos)): ?>
-        <div class="empty-state"><p>No hay prestamos vencidos.</p></div>
+        <div class="empty-state"><p>No hay préstamos vencidos.</p></div>
         <?php else: ?>
         <div class="table-wrapper">
             <table>
-                <thead><tr><th>Documento</th><th>Solicitante</th><th>Salida</th><th>Vencimiento</th><th>Dias Vencido</th></tr></thead>
+                <thead><tr><th>Documento</th><th>Solicitante</th><th>Salida</th><th>Vencimiento</th><th>Días Vencido</th></tr></thead>
                 <tbody>
                 <?php foreach ($vencidos as $v):
                     $dias = (int) ((time() - strtotime($v['fecha_devolucion_estimada'])) / 86400);
@@ -180,7 +180,7 @@ if ($tipo):
                     <td><?= sanitize($v['solicitante_nombre']) ?></td>
                     <td><?= dateFormat($v['fecha_salida']) ?></td>
                     <td><?= dateFormat($v['fecha_devolucion_estimada']) ?></td>
-                    <td><span class="badge badge-danger"><?= $dias ?> dias</span></td>
+                    <td><span class="badge badge-danger"><?= $dias ?> días</span></td>
                 </tr>
                 <?php endforeach; ?>
                 </tbody>
@@ -193,7 +193,7 @@ if ($tipo):
 <?php elseif ($tipo === 'ubicacion'): ?>
 <div class="card" style="margin-top:16px;">
     <div class="card-header">
-        <h3>Reporte: Inventario por Ubicacion</h3>
+        <h3>Reporte: Inventario por Ubicación</h3>
         <button onclick="window.print()" class="btn btn-sm btn-outline">Imprimir</button>
     </div>
     <div class="card-body">

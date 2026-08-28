@@ -20,7 +20,7 @@ $diasDefault = (int) ($prestamosConfig->fetchColumn() ?: 15);
 
 if (isPost()) {
     if (!verifyCSRF()) {
-        $errors[] = 'Token de seguridad invalido.';
+        $errors[] = 'Token de seguridad inválido.';
     } else {
         $docId = getPostInt('documento_id');
         $documento = Documento::findById($docId);
@@ -30,7 +30,7 @@ if (isPost()) {
         } elseif ($documento['estado'] === 'prestado') {
             $errors[] = 'Este documento ya se encuentra prestado.';
         } elseif ($documento['estado'] !== 'disponible') {
-            $errors[] = 'El documento no esta disponible para prestamo.';
+            $errors[] = 'El documento no está disponible para préstamo.';
         }
 
         $data = [
@@ -48,7 +48,7 @@ if (isPost()) {
         ];
 
         if (empty($data['solicitante_nombre'])) $errors[] = 'El nombre del solicitante es obligatorio.';
-        if (empty($data['fecha_devolucion_estimada'])) $errors[] = 'La fecha estimada de devolucion es obligatoria.';
+        if (empty($data['fecha_devolucion_estimada'])) $errors[] = 'La fecha estimada de devolución es obligatoria.';
 
         if (empty($errors)) {
             $prestamoId = Prestamo::create($data);
@@ -58,16 +58,16 @@ if (isPost()) {
                     "Documento prestado a {$data['solicitante_nombre']}. Devolucion estimada: {$data['fecha_devolucion_estimada']}");
                 Audit::registrar(Auth::id(), 'prestamo_registro', 'prestamos', $prestamoId,
                     "Prestamo registrado para documento ID {$docId}");
-                flash('success', 'Prestamo registrado correctamente.');
+                flash('success', 'Préstamo registrado correctamente.');
                 redirect(SITE_URL . '/prestamos/listar.php');
             } else {
-                $errors[] = 'Error al registrar el prestamo.';
+                $errors[] = 'Error al registrar el préstamo.';
             }
         }
     }
 }
 
-$pageTitle = 'Registrar Prestamo';
+$pageTitle = 'Registrar Préstamo';
 ob_start();
 ?>
 
@@ -83,7 +83,7 @@ ob_start();
 
 <div class="card">
     <div class="card-header">
-        <h3>Registrar Prestamo de Documento</h3>
+        <h3>Registrar Préstamo de Documento</h3>
     </div>
     <div class="card-body">
         <form method="POST" action="">
@@ -121,7 +121,7 @@ ob_start();
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>Area Solicitante</label>
+                    <label>Área Solicitante</label>
                     <input type="text" name="solicitante_area" class="form-control"
                            value="<?= sanitize(getPost('solicitante_area')) ?>">
                 </div>
@@ -144,7 +144,7 @@ ob_start();
                            value="<?= sanitize(getPost('hora_salida', date('H:i'))) ?>">
                 </div>
                 <div class="form-group">
-                    <label>Devolucion Estimada <span class="required">*</span></label>
+                    <label>Devolución Estimada <span class="required">*</span></label>
                     <input type="date" name="fecha_devolucion_estimada" class="form-control" required
                            value="<?= sanitize(getPost('fecha_devolucion_estimada', date('Y-m-d', strtotime("+{$diasDefault} days")))) ?>">
                 </div>
@@ -170,7 +170,7 @@ ob_start();
                         <polyline points="9 11 12 14 22 4"/>
                         <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
                     </svg>
-                    Registrar Prestamo
+                    Registrar Préstamo
                 </button>
                 <a href="<?= SITE_URL ?>/index.php" class="btn btn-outline">Cancelar</a>
             </div>

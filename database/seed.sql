@@ -20,44 +20,46 @@ INSERT INTO `usuarios` (`rol_id`, `nombres`, `apellidos`, `dni`, `email`, `usern
 (1, 'Administrador', 'Sistema', '00000000', 'admin@municipalidad.gob.pe', 'admin', '$2y$10$DxCJ4mfZvS6E7ILqD5ewlenF2M2lyLqfoMI8n8jqhKJJs35HpNp1.', 1);
 
 -- ------------------------------------------------------------
--- Areas de ejemplo
+-- Areas de la municipalidad
 -- ------------------------------------------------------------
 INSERT INTO `areas` (`nombre`, `descripcion`) VALUES
-('Secretaria General', 'Oficina central de administracion general'),
-('Direccion de Administracion y Finanzas', 'Gestion administrativa y financiera'),
-('Direccion de Planeamiento y Presupuesto', 'Planificacion estrategica y presupuesto municipal'),
-('Direccion de Obras Publicas', 'Infraestructura y obras publicas'),
-('Direccion de Desarrollo Social', 'Programas sociales y atencion a la poblacion'),
-('Direccion de Seguridad Ciudadana', 'Seguridad y orden publico'),
-('Direccion de Salud Publica', 'Programas de salud municipal'),
-('Direccion de Educacion', 'Gestion educativa municipal'),
-('Direccion de Agricultura', 'Desarrollo agricola y pecuario'),
-('Archivo Central', 'Resguardo y custodia de documentos municipales'),
-('Atencion al Publico', 'Ventanilla unica de atencion ciudadana'),
-('Juridica', 'Asesoria legal municipal'),
-('Registro Civil', 'Registro de nacimientos, defunciones y matrimonios'),
-('Tesoreria', 'Manejo de fondos y cuentas municipales'),
-('Contabilidad', 'Registro contable y financiero');
+('Mesa de Partes', ''),
+('Planeamiento y Presupuesto', ''),
+('Unidad de Tesorería', ''),
+('Registro Civil', ''),
+('Gerencia Municipal', ''),
+('Ejecución Coactiva', ''),
+('Unidad de Recursos Humanos', ''),
+('Unidad de Abastecimiento', ''),
+('Alcaldía', ''),
+('Defensa Civil y ATM', ''),
+('Subgerencia de Desarrollo Territorial e Infraestructura', ''),
+('Subgerencia de Desarrollo Social', ''),
+('Subgerencia de Desarrollo Económico', ''),
+('Subgerencia de Servicios Municipales y Gestión Ambiental', ''),
+('Serenazgo', ''),
+('Unidad de Fiscalización', ''),
+('Oficina de Planificación Catastro Control Urbano y Rural', ''),
+('Supervisión y Liquidación de Obras', ''),
+('Medio Ambiente', ''),
+('Unidad Formuladora', ''),
+('Secretaría General', '');
 
 -- ------------------------------------------------------------
 -- Tipos de documento
 -- ------------------------------------------------------------
 INSERT INTO `tipos_documento` (`nombre`, `descripcion`) VALUES
-('Resolucion', 'Resoluciones de alcaldia y directivas'),
-('Oficio', 'Oficios de comunicacion interna y externa'),
-('Expediente', 'Expedientes administrativos completos'),
-('Tomo', 'Tomo con documentos fisicos archivados'),
-('Acta', 'Actas de sesiones y reuniones'),
-('Informe', 'Informes tecnicos y de gestion'),
-('Contrato', 'Contratos y convenios'),
-('Solicitud', 'Solicitudes ciudadanas o internas'),
-('Memo', 'Memorandums internos'),
-('Dictamen', 'Dictamenes tecnicos o juridicos'),
-('Pliego', 'Pliegos presupuestales'),
-('Orden de Pago', 'Ordenes de pago y documentos financieros'),
-('Nota', 'Notas de fifo o internas'),
-('Anexo', 'Anexos a documentos principales'),
-('Lote', 'Conjunto de documentos relacionados');
+('Memorial', ''),
+('Cédula de Notificación Ordenanza', ''),
+('Acuerdo', ''),
+('Resolución', ''),
+('Memorándum Múltiple', ''),
+('Memorándum', ''),
+('Informe', ''),
+('Notaría', ''),
+('Oficio', ''),
+('Carta', ''),
+('Memorándum Simple', '');
 
 -- ------------------------------------------------------------
 -- Ambientes del archivo

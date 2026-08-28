@@ -99,7 +99,7 @@ ob_start();
 
 <?php if ($stats['prestamos_vencidos'] > 0): ?>
 <div class="alert alert-danger">
-    <strong>Atencion:</strong> Existen <?= $stats['prestamos_vencidos'] ?> prestamo(s) vencido(s) que requieren atencion.
+    <strong>Atención:</strong> Existen <?= $stats['prestamos_vencidos'] ?> préstamo(s) vencido(s) que requieren atención.
 </div>
 <?php endif; ?>
 
@@ -125,7 +125,7 @@ ob_start();
             <polyline points="9 11 12 14 22 4"/>
             <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
         </svg>
-        <strong>Registrar Prestamo</strong>
+        <strong>Registrar Préstamo</strong>
     </a>
     <a href="<?= SITE_URL ?>/prestamos/devolver.php" class="quick-action">
         <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
@@ -170,7 +170,7 @@ ob_start();
                 <table>
                     <thead>
                         <tr>
-                            <th>Codigo</th>
+                            <th>Código</th>
                             <th>Asunto</th>
                             <th>Estado</th>
                         </tr>
@@ -201,7 +201,7 @@ ob_start();
 
     <div class="card">
         <div class="card-header">
-            <h3>Documentos por Area Emisora</h3>
+            <h3>Documentos por Área Emisora</h3>
         </div>
         <div class="card-body" style="padding:0;">
             <?php if (empty($stats['por_area'])): ?>
@@ -213,7 +213,7 @@ ob_start();
                 <table>
                     <thead>
                         <tr>
-                            <th>Area</th>
+                            <th>Área</th>
                             <th style="text-align:right;">Cantidad</th>
                         </tr>
                     </thead>
@@ -267,7 +267,7 @@ ob_start();
 
     <div class="card">
         <div class="card-header">
-            <h3>Documentos por Anio</h3>
+            <h3>Documentos por Año</h3>
         </div>
         <div class="card-body" style="padding:0;">
             <?php if (empty($stats['por_anio'])): ?>
@@ -279,7 +279,7 @@ ob_start();
                 <table>
                     <thead>
                         <tr>
-                            <th>Anio</th>
+                            <th>Año</th>
                             <th style="text-align:right;">Cantidad</th>
                         </tr>
                     </thead>

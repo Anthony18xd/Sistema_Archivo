@@ -11,7 +11,7 @@ $action = getQuery('action', 'list');
 
 if (isPost()) {
     if (!verifyCSRF()) {
-        $errors[] = 'Token de seguridad invalido.';
+        $errors[] = 'Token de seguridad inválido.';
     } else {
         $actionType = getPost('action');
 
@@ -27,7 +27,7 @@ if (isPost()) {
 
         } elseif ($actionType === 'crear_estante') {
             $data = ['ambiente_id' => getPostInt('ambiente_id'), 'codigo' => getPost('codigo'), 'nombre' => getPost('nombre'), 'descripcion' => getPost('descripcion')];
-            if (empty($data['codigo']) || empty($data['nombre'])) $errors[] = 'Codigo y nombre son obligatorios.';
+            if (empty($data['codigo']) || empty($data['nombre'])) $errors[] = 'Código y nombre son obligatorios.';
             if (empty($errors)) {
                 Ubicacion::crearEstante($data);
                 Audit::registrar(Auth::id(), 'ubicacion_creacion', 'estantes', null, "Estante creado: {$data['codigo']}");
@@ -37,7 +37,7 @@ if (isPost()) {
 
         } elseif ($actionType === 'crear_caja') {
             $data = ['nivel_id' => getPostInt('nivel_id'), 'numero' => getPostInt('numero'), 'codigo' => getPost('codigo'), 'descripcion' => getPost('descripcion'), 'capacidad' => getPostInt('capacidad')];
-            if (empty($data['numero'])) $errors[] = 'El numero de caja es obligatorio.';
+            if (empty($data['numero'])) $errors[] = 'El número de caja es obligatorio.';
             if (empty($errors)) {
                 Ubicacion::crearCaja($data);
                 Audit::registrar(Auth::id(), 'ubicacion_creacion', 'cajas', null, "Caja creada en nivel {$data['nivel_id']}");
@@ -101,7 +101,7 @@ ob_start();
         <div class="card-body" style="padding:0;">
             <div class="table-wrapper">
                 <table>
-                    <thead><tr><th>Codigo</th><th>Nombre</th><th>Ambiente</th></tr></thead>
+                    <thead><tr><th>Código</th><th>Nombre</th><th>Ambiente</th></tr></thead>
                     <tbody>
                     <?php foreach ($estantes as $e): ?>
                     <tr>
@@ -127,7 +127,7 @@ ob_start();
                     </select>
                 </div>
                 <div class="form-row">
-                    <div class="form-group"><input type="text" name="codigo" class="form-control" placeholder="Codigo" required></div>
+                    <div class="form-group"><input type="text" name="codigo" class="form-control" placeholder="Código" required></div>
                     <div class="form-group"><input type="text" name="nombre" class="form-control" placeholder="Nombre" required></div>
                 </div>
                 <button type="submit" class="btn btn-primary btn-sm btn-block">+ Agregar</button>
@@ -159,7 +159,7 @@ ob_start();
                     </select>
                 </div>
                 <div class="form-row">
-                    <div class="form-group"><label>Numero</label><input type="number" name="numero" class="form-control" required min="1"></div>
+                    <div class="form-group"><label>Número</label><input type="number" name="numero" class="form-control" required min="1"></div>
                     <div class="form-group"><label>Capacidad</label><input type="number" name="capacidad" class="form-control" min="1" value="50"></div>
                 </div>
                 <button type="submit" class="btn btn-primary btn-sm btn-block">+ Crear Caja</button>

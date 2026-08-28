@@ -28,7 +28,7 @@ class Audit {
                 ':ua'          => substr(getUserAgent(), 0, 500)
             ]);
         } catch (PDOException $e) {
-            error_log('Error en auditoria: ' . $e->getMessage());
+            error_log('Error en auditoría: ' . $e->getMessage());
         }
     }
 

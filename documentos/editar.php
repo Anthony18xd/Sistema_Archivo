@@ -25,7 +25,7 @@ $cajas = Ubicacion::todasLasCajas();
 
 if (isPost()) {
     if (!verifyCSRF()) {
-        $errors[] = 'Token de seguridad invalido.';
+        $errors[] = 'Token de seguridad inválido.';
     } else {
         $data = [
             'codigo'            => getPost('codigo'),
@@ -42,12 +42,12 @@ if (isPost()) {
             'usuario_id'        => Auth::id()
         ];
 
-        if (empty($data['codigo'])) $errors[] = 'El codigo es obligatorio.';
+        if (empty($data['codigo'])) $errors[] = 'El código es obligatorio.';
         if (empty($data['asunto'])) $errors[] = 'El asunto es obligatorio.';
-        if (empty($data['anio'])) $errors[] = 'El anio es obligatorio.';
+        if (empty($data['anio'])) $errors[] = 'El año es obligatorio.';
 
         if (!empty($data['codigo']) && Documento::existeCodigo($data['codigo'], (int)$id)) {
-            $errors[] = 'El codigo ya esta registrado por otro documento.';
+            $errors[] = 'El código ya está registrado por otro documento.';
         }
 
         if (empty($errors)) {
@@ -90,12 +90,12 @@ ob_start();
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>Codigo <span class="required">*</span></label>
+                    <label>Código <span class="required">*</span></label>
                     <input type="text" name="codigo" class="form-control" required
                            value="<?= sanitize(getPost('codigo', $documento['codigo'])) ?>">
                 </div>
                 <div class="form-group">
-                    <label>Anio <span class="required">*</span></label>
+                    <label>Año <span class="required">*</span></label>
                     <input type="number" name="anio" class="form-control" required
                            min="1900" max="<?= date('Y') ?>"
                            value="<?= sanitize(getPost('anio', $documento['anio'])) ?>">
@@ -104,7 +104,7 @@ ob_start();
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>Area Emisora</label>
+                    <label>Área Emisora</label>
                     <select name="area_emisora_id" class="form-control">
                         <option value="">Seleccionar...</option>
                         <?php foreach ($areas as $area): ?>
@@ -115,7 +115,7 @@ ob_start();
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Area Custodio</label>
+                    <label>Área Custodio</label>
                     <select name="area_custodio_id" class="form-control">
                         <option value="">Seleccionar...</option>
                         <?php foreach ($areas as $area): ?>
@@ -140,7 +140,7 @@ ob_start();
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Numero de Folios</label>
+                    <label>Número de Folios</label>
                     <input type="number" name="num_folios" class="form-control" min="0"
                            value="<?= sanitize(getPost('num_folios', $documento['num_folios'])) ?>">
                 </div>
@@ -152,13 +152,13 @@ ob_start();
             </div>
 
             <div class="form-group">
-                <label>Descripcion</label>
+                <label>Descripción</label>
                 <textarea name="descripcion" class="form-control" rows="2"><?= sanitize(getPost('descripcion', $documento['descripcion'])) ?></textarea>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>Ubicacion Fisica (Caja)</label>
+                    <label>Ubicación Física (Caja)</label>
                     <select name="caja_id" class="form-control">
                         <option value="">Sin ubicar</option>
                         <?php foreach ($cajas as $caja):
@@ -175,7 +175,7 @@ ob_start();
                     <select name="estado" class="form-control">
                         <option value="disponible" <?= getPost('estado', $documento['estado']) === 'disponible' ? 'selected' : '' ?>>Disponible</option>
                         <option value="prestado" <?= getPost('estado', $documento['estado']) === 'prestado' ? 'selected' : '' ?>>Prestado</option>
-                        <option value="en_revision" <?= getPost('estado', $documento['estado']) === 'en_revision' ? 'selected' : '' ?>>En Revision</option>
+                        <option value="en_revision" <?= getPost('estado', $documento['estado']) === 'en_revision' ? 'selected' : '' ?>>En Revisión</option>
                         <option value="inactivo" <?= getPost('estado', $documento['estado']) === 'inactivo' ? 'selected' : '' ?>>Inactivo</option>
                     </select>
                 </div>

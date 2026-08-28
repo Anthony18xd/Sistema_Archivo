@@ -32,7 +32,7 @@ class Auth {
             $_SESSION['user_permisos'] = json_decode($user['permisos'], true);
             $_SESSION['logged_in'] = true;
 
-            Audit::registrar($user['id'], 'inicio_sesion', null, null, 'Inicio de sesion exitoso');
+            Audit::registrar($user['id'], 'inicio_sesion', null, null, 'Inicio de sesión exitoso');
 
             return $user;
         }
@@ -47,7 +47,7 @@ class Auth {
                 'cierre_sesion',
                 null,
                 null,
-                'Cierre de sesion'
+                'Cierre de sesión'
             );
         }
         session_destroy();
@@ -102,7 +102,7 @@ class Auth {
 
     public static function requireLogin(): void {
         if (!self::check()) {
-            flash('warning', 'Debe iniciar sesion para acceder.');
+            flash('warning', 'Debe iniciar sesión para acceder.');
             redirect(SITE_URL . '/auth/login.php');
         }
     }
@@ -110,7 +110,7 @@ class Auth {
     public static function requireAdmin(): void {
         self::requireLogin();
         if (!self::isAdmin()) {
-            flash('danger', 'No tiene permisos para acceder a esta seccion.');
+            flash('danger', 'No tiene permisos para acceder a esta sección.');
             redirect(SITE_URL . '/index.php');
         }
     }
@@ -118,7 +118,7 @@ class Auth {
     public static function requireWrite(): void {
         self::requireLogin();
         if (!self::canWrite()) {
-            flash('danger', 'No tiene permisos para realizar esta accion.');
+            flash('danger', 'No tiene permisos para realizar esta acción.');
             redirect(SITE_URL . '/index.php');
         }
     }

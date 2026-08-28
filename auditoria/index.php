@@ -16,7 +16,7 @@ $total = Audit::contar($filtros);
 $registros = Audit::getRegistros(100, 0, $filtros);
 $usuarios = Usuario::findAll();
 
-$pageTitle = 'Auditoria del Sistema';
+$pageTitle = 'Auditoría del Sistema';
 ob_start();
 ?>
 
@@ -28,17 +28,17 @@ ob_start();
         <form method="GET" action="">
             <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr 1fr auto;">
                 <div class="form-group">
-                    <label>Accion</label>
+                    <label>Acción</label>
                     <select name="accion" class="form-control">
                         <option value="">Todas</option>
-                        <option value="inicio_sesion" <?= getQuery('accion') === 'inicio_sesion' ? 'selected' : '' ?>>Inicio de sesion</option>
-                        <option value="cierre_sesion" <?= getQuery('accion') === 'cierre_sesion' ? 'selected' : '' ?>>Cierre de sesion</option>
+                        <option value="inicio_sesion" <?= getQuery('accion') === 'inicio_sesion' ? 'selected' : '' ?>>Inicio de sesión</option>
+                        <option value="cierre_sesion" <?= getQuery('accion') === 'cierre_sesion' ? 'selected' : '' ?>>Cierre de sesión</option>
                         <option value="documento_registro" <?= getQuery('accion') === 'documento_registro' ? 'selected' : '' ?>>Registro documento</option>
-                        <option value="documento_modificacion" <?= getQuery('accion') === 'documento_modificacion' ? 'selected' : '' ?>>Modificacion documento</option>
-                        <option value="prestamo_registro" <?= getQuery('accion') === 'prestamo_registro' ? 'selected' : '' ?>>Registro prestamo</option>
-                        <option value="prestamo_devolucion" <?= getQuery('accion') === 'prestamo_devolucion' ? 'selected' : '' ?>>Devolucion prestamo</option>
+                        <option value="documento_modificacion" <?= getQuery('accion') === 'documento_modificacion' ? 'selected' : '' ?>>Modificación documento</option>
+                        <option value="prestamo_registro" <?= getQuery('accion') === 'prestamo_registro' ? 'selected' : '' ?>>Registro préstamo</option>
+                        <option value="prestamo_devolucion" <?= getQuery('accion') === 'prestamo_devolucion' ? 'selected' : '' ?>>Devolución préstamo</option>
                         <option value="login_fallido" <?= getQuery('accion') === 'login_fallido' ? 'selected' : '' ?>>Login fallido</option>
-                        <option value="usuario_creacion" <?= getQuery('accion') === 'usuario_creacion' ? 'selected' : '' ?>>Creacion usuario</option>
+                        <option value="usuario_creacion" <?= getQuery('accion') === 'usuario_creacion' ? 'selected' : '' ?>>Creación usuario</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -78,7 +78,7 @@ ob_start();
     <div class="card-body" style="padding:0;">
         <?php if (empty($registros)): ?>
             <div class="empty-state">
-                <p>No hay registros de auditoria.</p>
+                <p>No hay registros de auditoría.</p>
             </div>
         <?php else: ?>
         <div class="table-wrapper">
@@ -87,7 +87,7 @@ ob_start();
                     <tr>
                         <th>Fecha/Hora</th>
                         <th>Usuario</th>
-                        <th>Accion</th>
+                        <th>Acción</th>
                         <th>Tabla</th>
                         <th>ID Registro</th>
                         <th>Detalle</th>

@@ -9,7 +9,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Instalacion - Sistema de Archivo Municipal</title>
+    <title>Instalación - Sistema de Archivo Municipal</title>
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; display: flex; justify-content: center; padding: 40px; }
         .card { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 24px rgba(0,0,0,0.12); max-width: 600px; width: 100%; }
@@ -24,7 +24,7 @@
 </head>
 <body>
 <div class="card">
-    <h1>Sistema de Archivo Municipal - Instalacion</h1>
+    <h1>Sistema de Archivo Municipal - Instalación</h1>
 
     <?php
     $host = 'localhost';
@@ -76,25 +76,25 @@
         echo "\nPuede acceder al sistema con:\n";
         echo "  Usuario: admin\n";
         echo "  Contrasena: admin123\n";
-        echo "\nIMPORTANTE: Elimine este archivo (install.php) despues de la instalacion.\n";
+        echo "\nIMPORTANTE: Elimine este archivo (install.php) después de la instalación.\n";
         echo '</pre>';
-        echo '<p class="success">Instalacion completada exitosamente.</p>';
+        echo '<p class="success">Instalación completada exitosamente.</p>';
         echo '<a href="auth/login.php" class="btn">Ir al Login</a>';
 
     } else {
     ?>
 
     <div class="warn">
-        <strong>Advertencia:</strong> Este script creara la base de datos e insertara datos de prueba.
-        Ejecutar una sola vez. Eliminar este archivo despues de la instalacion.
+        <strong>Advertencia:</strong> Este script creará la base de datos e insertará datos de prueba.
+        Ejecutar una sola vez. Eliminar este archivo después de la instalación.
     </div>
 
     <p>Base de datos: <strong><?= $dbName ?></strong></p>
     <p>Servidor MySQL: <strong><?= $host ?></strong></p>
     <p>Usuario MySQL: <strong><?= $user ?></strong></p>
 
-    <a href="?run=1" class="btn" onclick="return confirm('Desea proceder con la instalacion?')">
-        Ejecutar Instalacion
+    <a href="?run=1" class="btn" onclick="return confirm('¿Desea proceder con la instalación?')">
+        Ejecutar Instalación
     </a>
 
     <?php } ?>

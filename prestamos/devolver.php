@@ -16,15 +16,15 @@ if ($prestamoId) {
 
 if (isPost()) {
     if (!verifyCSRF()) {
-        $errors[] = 'Token de seguridad invalido.';
+        $errors[] = 'Token de seguridad inválido.';
     } else {
         $pId = getPostInt('prestamo_id');
         $prestamo = Prestamo::findById($pId);
 
         if (!$prestamo) {
-            $errors[] = 'Prestamo no encontrado.';
+            $errors[] = 'Préstamo no encontrado.';
         } elseif ($prestamo['estado'] !== 'activo') {
-            $errors[] = 'Este prestamo ya fue devuelto o no esta activo.';
+            $errors[] = 'Este préstamo ya fue devuelto o no está activo.';
         }
 
         $data = [
@@ -45,11 +45,11 @@ if (isPost()) {
                 Historial::registrar($prestamo['documento_id'], Auth::id(), 'devolucion',
                     "Documento devuelto por {$data['usuario_devolucion_id']}. Estado: {$data['estado_documento_entrada']}");
                 Audit::registrar(Auth::id(), 'prestamo_devolucion', 'prestamos', $pId,
-                    "Devolucion registrada para prestamo ID {$pId}");
+                    "Devolución registrada para préstamo ID {$pId}");
                 flash('success', 'Documento devuelto correctamente.');
                 redirect(SITE_URL . '/prestamos/listar.php');
             } else {
-                $errors[] = 'Error al registrar la devolucion.';
+                $errors[] = 'Error al registrar la devolución.';
             }
         }
     }
@@ -76,9 +76,9 @@ ob_start();
     <div class="card-body">
         <?php if (!$prestamo): ?>
         <div class="form-group">
-            <label>Prestamo ID</label>
+            <label>Préstamo ID</label>
             <form method="GET" action="" style="display:flex; gap:10px;">
-                <input type="number" name="prestamo_id" class="form-control" placeholder="Ingrese el ID del prestamo">
+                <input type="number" name="prestamo_id" class="form-control" placeholder="Ingrese el ID del préstamo">
                 <button type="submit" class="btn btn-primary">Buscar</button>
             </form>
         </div>
@@ -88,7 +88,7 @@ ob_start();
             <strong>Asunto:</strong> <?= sanitize(mb_strimwidth($prestamo['documento_asunto'], 0, 80, '...')) ?><br>
             <strong>Solicitante:</strong> <?= sanitize($prestamo['solicitante_nombre']) ?><br>
             <strong>Fecha salida:</strong> <?= dateFormat($prestamo['fecha_salida']) ?> <?= timeFormat($prestamo['hora_salida']) ?><br>
-            <strong>Devolucion estimada:</strong> <?= dateFormat($prestamo['fecha_devolucion_estimada']) ?>
+            <strong>Devolución estimada:</strong> <?= dateFormat($prestamo['fecha_devolucion_estimada']) ?>
             <?php if (strtotime($prestamo['fecha_devolucion_estimada']) < time()): ?>
             <span class="badge badge-danger" style="margin-left:8px;">VENCIDO</span>
             <?php endif; ?>
@@ -100,12 +100,12 @@ ob_start();
 
             <div class="form-row-3">
                 <div class="form-group">
-                    <label>Fecha Devolucion</label>
+                    <label>Fecha Devolución</label>
                     <input type="date" name="fecha_devolucion_real" class="form-control"
                            value="<?= date('Y-m-d') ?>">
                 </div>
                 <div class="form-group">
-                    <label>Hora Devolucion</label>
+                    <label>Hora Devolución</label>
                     <input type="time" name="hora_devolucion_real" class="form-control"
                            value="<?= date('H:i') ?>">
                 </div>
@@ -129,7 +129,7 @@ ob_start();
                         <polyline points="1 4 1 10 7 10"/>
                         <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
                     </svg>
-                    Registrar Devolucion
+                    Registrar Devolución
                 </button>
                 <a href="<?= SITE_URL ?>/prestamos/listar.php" class="btn btn-outline">Cancelar</a>
             </div>

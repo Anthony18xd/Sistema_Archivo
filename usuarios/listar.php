@@ -15,7 +15,7 @@ $editUser = null;
 
 if (isPost()) {
     if (!verifyCSRF()) {
-        $errors[] = 'Token de seguridad invalido.';
+        $errors[] = 'Token de seguridad inválido.';
     } else {
         $action = getPost('action');
 
@@ -35,8 +35,8 @@ if (isPost()) {
             if (empty($data['nombres'])) $errors[] = 'Los nombres son obligatorios.';
             if (empty($data['apellidos'])) $errors[] = 'Los apellidos son obligatorios.';
             if (empty($data['username'])) $errors[] = 'El usuario es obligatorio.';
-            if (empty($data['password'])) $errors[] = 'La contrasena es obligatoria.';
-            if (strlen($data['password']) < 6) $errors[] = 'La contrasena debe tener al menos 6 caracteres.';
+            if (empty($data['password'])) $errors[] = 'La contraseña es obligatoria.';
+            if (strlen($data['password']) < 6) $errors[] = 'La contraseña debe tener al menos 6 caracteres.';
 
             if (!empty($data['username']) && Usuario::existeUsername($data['username'])) {
                 $errors[] = 'El nombre de usuario ya existe.';
@@ -93,7 +93,7 @@ if (isset($_GET['edit'])) {
     $showForm = true;
 }
 
-$pageTitle = 'Gestion de Usuarios';
+$pageTitle = 'Gestión de Usuarios';
 ob_start();
 ?>
 
@@ -124,7 +124,7 @@ ob_start();
                         <th>DNI</th>
                         <th>Rol</th>
                         <th>Estado</th>
-                        <th>Ultimo Acceso</th>
+                        <th>Último Acceso</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -196,7 +196,7 @@ ob_start();
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>Telefono</label>
+                    <label>Teléfono</label>
                     <input type="text" name="telefono" class="form-control"
                            value="<?= sanitize($editUser['telefono'] ?? getPost('telefono')) ?>">
                 </div>
@@ -219,7 +219,7 @@ ob_start();
                            value="<?= sanitize($editUser['username'] ?? getPost('username')) ?>">
                 </div>
                 <div class="form-group">
-                    <label>Contrasena <?= $editUser ? '(dejar vacio para no cambiar)' : '<span class="required">*</span>' ?></label>
+                    <label>Contraseña <?= $editUser ? '(dejar vacío para no cambiar)' : '<span class="required">*</span>' ?></label>
                     <input type="password" name="password" class="form-control" <?= $editUser ? '' : 'required' ?>>
                 </div>
             </div>

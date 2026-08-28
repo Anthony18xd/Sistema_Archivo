@@ -1,0 +1,8 @@
+*.log
+server.log
+thumbnails/
+Thumbs.db
+.DS_Store
+vendor/
+composer.lock
+config/config.local.php

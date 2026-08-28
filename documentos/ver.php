@@ -48,12 +48,12 @@ ob_start();
     <div class="card-body">
         <div class="grid-2">
             <div>
-                <h4 style="font-size:12px; text-transform:uppercase; color:var(--text-light); margin-bottom:12px;">Informacion del Documento</h4>
+                <h4 style="font-size:12px; text-transform:uppercase; color:var(--text-light); margin-bottom:12px;">Información del Documento</h4>
                 <table>
-                    <tr><td style="width:140px; font-weight:600;">Codigo</td><td><?= sanitize($documento['codigo']) ?></td></tr>
-                    <tr><td style="font-weight:600;">Anio</td><td><?= sanitize($documento['anio']) ?></td></tr>
-                    <tr><td style="font-weight:600;">Area Emisora</td><td><?= sanitize($documento['area_emisora_nombre'] ?? 'No asignada') ?></td></tr>
-                    <tr><td style="font-weight:600;">Area Custodio</td><td><?= sanitize($documento['area_custodio_nombre'] ?? 'No asignada') ?></td></tr>
+                    <tr><td style="width:140px; font-weight:600;">Código</td><td><?= sanitize($documento['codigo']) ?></td></tr>
+                    <tr><td style="font-weight:600;">Año</td><td><?= sanitize($documento['anio']) ?></td></tr>
+                    <tr><td style="font-weight:600;">Área Emisora</td><td><?= sanitize($documento['area_emisora_nombre'] ?? 'No asignada') ?></td></tr>
+                    <tr><td style="font-weight:600;">Área Custodio</td><td><?= sanitize($documento['area_custodio_nombre'] ?? 'No asignada') ?></td></tr>
                     <tr><td style="font-weight:600;">Tipo</td><td><?= sanitize($documento['tipo_documento_nombre'] ?? 'No definido') ?></td></tr>
                     <tr><td style="font-weight:600;">Folios</td><td><?= $documento['num_folios'] ? formatNumber((int)$documento['num_folios']) : '-' ?></td></tr>
                     <tr><td style="font-weight:600;">Fecha Registro</td><td><?= dateFormat($documento['fecha_registro']) ?></td></tr>
@@ -61,7 +61,7 @@ ob_start();
                 </table>
             </div>
             <div>
-                <h4 style="font-size:12px; text-transform:uppercase; color:var(--text-light); margin-bottom:12px;">Ubicacion Fisica</h4>
+                <h4 style="font-size:12px; text-transform:uppercase; color:var(--text-light); margin-bottom:12px;">Ubicación Física</h4>
                 <?php if ($documento['ambiente_nombre']): ?>
                 <div style="background:#f8fafc; padding:16px; border-radius:var(--radius); border:1px solid var(--border-light);">
                     <div class="location-display" style="font-size:14px;">
@@ -76,9 +76,9 @@ ob_start();
                 </div>
                 <?php else: ?>
                 <div style="background:#f8fafc; padding:16px; border-radius:var(--radius); border:1px solid var(--border-light); color:var(--text-muted);">
-                    Documento sin ubicacion fisica asignada.
+                    Documento sin ubicación física asignada.
                     <?php if (Auth::canWrite()): ?>
-                    <br><a href="<?= SITE_URL ?>/documentos/editar.php?id=<?= $documento['id'] ?>">Asignar ubicacion</a>
+                    <br><a href="<?= SITE_URL ?>/documentos/editar.php?id=<?= $documento['id'] ?>">Asignar ubicación</a>
                     <?php endif; ?>
                 </div>
                 <?php endif; ?>
@@ -87,7 +87,7 @@ ob_start();
                 <p style="font-size:13px; line-height:1.6;"><?= nl2br(sanitize($documento['asunto'])) ?></p>
 
                 <?php if ($documento['descripcion']): ?>
-                <h4 style="font-size:12px; text-transform:uppercase; color:var(--text-light); margin:16px 0 8px;">Descripcion</h4>
+                <h4 style="font-size:12px; text-transform:uppercase; color:var(--text-light); margin:16px 0 8px;">Descripción</h4>
                 <p style="font-size:13px; line-height:1.6;"><?= nl2br(sanitize($documento['descripcion'])) ?></p>
                 <?php endif; ?>
 
@@ -103,7 +103,7 @@ ob_start();
 <?php if (!empty($prestamosHistorial)): ?>
 <div class="card" style="margin-top:16px;">
     <div class="card-header">
-        <h3>Historial de Prestamos</h3>
+        <h3>Historial de Préstamos</h3>
     </div>
     <div class="card-body" style="padding:0;">
         <div class="table-wrapper">
@@ -112,10 +112,10 @@ ob_start();
                     <tr>
                         <th>Solicitante</th>
                         <th>DNI</th>
-                        <th>Area</th>
+                        <th>Área</th>
                         <th>Fecha Salida</th>
-                        <th>Devolucion Estimada</th>
-                        <th>Devolucion Real</th>
+                        <th>Devolución Estimada</th>
+                        <th>Devolución Real</th>
                         <th>Estado</th>
                     </tr>
                 </thead>
@@ -158,7 +158,7 @@ ob_start();
                     <tr>
                         <th>Fecha</th>
                         <th>Usuario</th>
-                        <th>Accion</th>
+                        <th>Acción</th>
                         <th>Detalle</th>
                     </tr>
                 </thead>

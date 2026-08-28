@@ -13,7 +13,7 @@ $error = '';
 
 if (isPost()) {
     if (!verifyCSRF()) {
-        $error = 'Token de seguridad invalido. Intente de nuevo.';
+        $error = 'Token de seguridad inválido. Intente de nuevo.';
     } else {
         $username = getPost('username');
         $password = getPost('password');

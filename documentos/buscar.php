@@ -30,12 +30,12 @@ ob_start();
 
 <div class="card">
     <div class="card-header">
-        <h3>Busqueda de Documentos</h3>
+        <h3>Búsqueda de Documentos</h3>
     </div>
     <div class="card-body">
         <form method="GET" action="">
             <div class="search-box">
-                <input type="text" name="q" class="form-control" placeholder="Buscar por codigo, asunto, area, tipo..."
+                <input type="text" name="q" class="form-control" placeholder="Buscar por código, asunto, área, tipo..."
                        value="<?= sanitize($termino) ?>">
                 <button type="submit" class="btn btn-primary">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
@@ -47,7 +47,7 @@ ob_start();
 
             <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr 1fr;">
                 <div class="form-group">
-                    <label>Anio</label>
+                    <label>Año</label>
                     <input type="number" name="anio" class="form-control" placeholder="Ej: 2026"
                            value="<?= sanitize(getQuery('anio')) ?>">
                 </div>
@@ -57,12 +57,12 @@ ob_start();
                         <option value="">Todos</option>
                         <option value="disponible" <?= getQuery('estado') === 'disponible' ? 'selected' : '' ?>>Disponible</option>
                         <option value="prestado" <?= getQuery('estado') === 'prestado' ? 'selected' : '' ?>>Prestado</option>
-                        <option value="en_revision" <?= getQuery('estado') === 'en_revision' ? 'selected' : '' ?>>En Revision</option>
+                        <option value="en_revision" <?= getQuery('estado') === 'en_revision' ? 'selected' : '' ?>>En Revisión</option>
                         <option value="inactivo" <?= getQuery('estado') === 'inactivo' ? 'selected' : '' ?>>Inactivo</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Area Emisora</label>
+                    <label>Área Emisora</label>
                     <select name="area_emisora_id" class="form-control">
                         <option value="">Todas</option>
                         <?php foreach ($areas as $area): ?>
@@ -99,20 +99,20 @@ ob_start();
                 <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5">
                     <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </svg>
-                <p>No se encontraron documentos con los criterios de busqueda.</p>
+                <p>No se encontraron documentos con los criterios de búsqueda.</p>
             </div>
         <?php else: ?>
         <div class="table-wrapper">
             <table>
                 <thead>
                     <tr>
-                        <th>Codigo</th>
-                        <th>Anio</th>
-                        <th>Area Emisora</th>
+                        <th>Código</th>
+                        <th>Año</th>
+                        <th>Área Emisora</th>
                         <th>Tipo</th>
                         <th>Asunto</th>
                         <th>Estado</th>
-                        <th>Ubicacion</th>
+                        <th>Ubicación</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
