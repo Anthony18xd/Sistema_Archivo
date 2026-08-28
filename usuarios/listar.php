@@ -38,7 +38,7 @@ if (isPost()) {
             if (empty($data['password'])) $errors[] = 'La contraseña es obligatoria.';
             if (strlen($data['password']) < 6) $errors[] = 'La contraseña debe tener al menos 6 caracteres.';
 
-            if (!empty($data['username']) && Usuario::existeUsername($data['username'])) {
+            if (!empty($data['username']) && Usuario::existsUsername($data['username'])) {
                 $errors[] = 'El nombre de usuario ya existe.';
             }
 
@@ -73,7 +73,7 @@ if (isPost()) {
             if (empty($data['nombres'])) $errors[] = 'Los nombres son obligatorios.';
             if (empty($data['username'])) $errors[] = 'El usuario es obligatorio.';
 
-            if (!empty($data['username']) && Usuario::existeUsername($data['username'], $userId)) {
+            if (!empty($data['username']) && Usuario::existsUsername($data['username'], $userId)) {
                 $errors[] = 'El nombre de usuario ya existe.';
             }
 
