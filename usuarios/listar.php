@@ -37,6 +37,10 @@ if (isPost()) {
             if (empty($data['username'])) $errors[] = 'El usuario es obligatorio.';
             if (empty($data['password'])) $errors[] = 'La contraseña es obligatoria.';
             if (strlen($data['password']) < 6) $errors[] = 'La contraseña debe tener al menos 6 caracteres.';
+            if (!empty($data['dni']) && strlen($data['dni']) > 8) $errors[] = 'El DNI debe tener como máximo 8 caracteres.';
+            if (!empty($data['telefono']) && strlen($data['telefono']) > 9) $errors[] = 'El teléfono debe tener como máximo 9 caracteres.';
+            if (!empty($data['dni']) && !ctype_digit($data['dni'])) $errors[] = 'El DNI debe contener solo números.';
+            if (!empty($data['telefono']) && !ctype_digit($data['telefono'])) $errors[] = 'El teléfono debe contener solo números.';
 
             if (!empty($data['username']) && Usuario::existsUsername($data['username'])) {
                 $errors[] = 'El nombre de usuario ya existe.';
@@ -72,6 +76,10 @@ if (isPost()) {
 
             if (empty($data['nombres'])) $errors[] = 'Los nombres son obligatorios.';
             if (empty($data['username'])) $errors[] = 'El usuario es obligatorio.';
+            if (!empty($data['dni']) && strlen($data['dni']) > 8) $errors[] = 'El DNI debe tener como máximo 8 caracteres.';
+            if (!empty($data['telefono']) && strlen($data['telefono']) > 9) $errors[] = 'El teléfono debe tener como máximo 9 caracteres.';
+            if (!empty($data['dni']) && !ctype_digit($data['dni'])) $errors[] = 'El DNI debe contener solo números.';
+            if (!empty($data['telefono']) && !ctype_digit($data['telefono'])) $errors[] = 'El teléfono debe contener solo números.';
 
             if (!empty($data['username']) && Usuario::existsUsername($data['username'], $userId)) {
                 $errors[] = 'El nombre de usuario ya existe.';
@@ -184,7 +192,7 @@ ob_start();
             <div class="form-row">
                 <div class="form-group">
                     <label>DNI</label>
-                    <input type="text" name="dni" class="form-control"
+                    <input type="text" name="dni" class="form-control" maxlength="8" data-numeric
                            value="<?= sanitize($editUser['dni'] ?? getPost('dni')) ?>">
                 </div>
                 <div class="form-group">
@@ -197,7 +205,7 @@ ob_start();
             <div class="form-row">
                 <div class="form-group">
                     <label>Teléfono</label>
-                    <input type="text" name="telefono" class="form-control"
+                    <input type="text" name="telefono" class="form-control" maxlength="9" data-numeric
                            value="<?= sanitize($editUser['telefono'] ?? getPost('telefono')) ?>">
                 </div>
                 <div class="form-group">

@@ -185,6 +185,12 @@ if (!Auth::check()) {
     </div>
 
     <script>
+    document.addEventListener('input', function(e) {
+        var el = e.target;
+        if (el && el.matches && el.matches('input[data-numeric]') && /\D/.test(el.value)) {
+            el.value = el.value.replace(/\D/g, '');
+        }
+    });
     document.getElementById('menuToggle').addEventListener('click', function() {
         document.getElementById('sidebar').classList.toggle('sidebar-open');
     });

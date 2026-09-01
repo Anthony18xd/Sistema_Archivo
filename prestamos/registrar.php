@@ -49,6 +49,8 @@ if (isPost()) {
 
         if (empty($data['solicitante_nombre'])) $errors[] = 'El nombre del solicitante es obligatorio.';
         if (empty($data['fecha_devolucion_estimada'])) $errors[] = 'La fecha estimada de devolución es obligatoria.';
+        if (!empty($data['solicitante_dni']) && strlen($data['solicitante_dni']) > 8) $errors[] = 'El DNI debe tener como máximo 8 caracteres.';
+        if (!empty($data['solicitante_dni']) && !ctype_digit($data['solicitante_dni'])) $errors[] = 'El DNI debe contener solo números.';
 
         if (empty($errors)) {
             $prestamoId = Prestamo::create($data);
@@ -114,7 +116,7 @@ ob_start();
                 </div>
                 <div class="form-group">
                     <label>DNI</label>
-                    <input type="text" name="solicitante_dni" class="form-control"
+                    <input type="text" name="solicitante_dni" class="form-control" maxlength="8" data-numeric
                            value="<?= sanitize(getPost('solicitante_dni')) ?>">
                 </div>
             </div>
