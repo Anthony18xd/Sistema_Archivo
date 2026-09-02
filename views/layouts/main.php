@@ -107,7 +107,16 @@ if (!Auth::check()) {
                 </a>
 
                 <?php if (Auth::isAdmin()): ?>
-                <div class="nav-section">ADMINISTRACIÓN</div>
+                <div class="nav-section">ADMINISTRACION</div>
+
+                <a href="<?= SITE_URL ?>/importar.php" class="nav-item <?= basename($_SERVER['SCRIPT_NAME']) === 'importar.php' ? 'active' : '' ?>">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    <span>Importar Excel</span>
+                </a>
 
                 <a href="<?= SITE_URL ?>/usuarios/listar.php" class="nav-item <?= basename($_SERVER['SCRIPT_NAME']) === 'listar.php' && strpos($_SERVER['SCRIPT_NAME'], 'usuarios') !== false ? 'active' : '' ?>">
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
@@ -119,12 +128,16 @@ if (!Auth::check()) {
                     <span>Usuarios</span>
                 </a>
 
-                <a href="<?= SITE_URL ?>/ubicaciones/administrar.php" class="nav-item <?= basename($_SERVER['SCRIPT_NAME']) === 'administrar.php' ? 'active' : '' ?>">
+                <div class="nav-section" style="opacity:0.5; pointer-events:none;">
+                    <small>FASE 2 (PROXIMAMENTE)</small>
+                </div>
+
+                <a class="nav-item" style="opacity:0.4; pointer-events:none;" title="Disponible en Fase 2 - Inventario fisico de deposito">
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="3"/>
-                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                        <circle cx="12" cy="10" r="3"/>
                     </svg>
-                    <span>Gestionar Ubicaciones</span>
+                    <span>Organizacion de Deposito</span>
                 </a>
 
                 <a href="<?= SITE_URL ?>/reportes/index.php" class="nav-item <?= basename($_SERVER['SCRIPT_NAME']) === 'index.php' && strpos($_SERVER['SCRIPT_NAME'], 'reportes') !== false ? 'active' : '' ?>">
@@ -139,7 +152,7 @@ if (!Auth::check()) {
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                     </svg>
-                    <span>Auditoría</span>
+                    <span>Auditoria</span>
                 </a>
                 <?php endif; ?>
             </nav>

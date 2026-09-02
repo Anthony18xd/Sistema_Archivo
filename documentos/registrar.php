@@ -1,7 +1,11 @@
 <?php
 /**
  * ARCHIVO: documentos/registrar.php
- * REGISTRO DE NUEVO DOCUMENTO
+ * REGISTRO MANUAL DE TOMOS Y DOCUMENTOS - FASE 1
+ *
+ * Los campos de ubicacion topografica (estante, nivel, caja, ambiente)
+ * son OPCIONALES en Fase 1. Por defecto el tomo queda en:
+ * 'Pendiente de Asignacion / Archivo General'
  */
 require_once dirname(__DIR__) . '/config/config.php';
 Auth::requireWrite();
@@ -11,46 +15,96 @@ $success = '';
 
 $areas = Area::findAll();
 $tipos = TipoDocumento::findAll();
-$cajas = Ubicacion::todasLasCajas();
 
 if (isPost()) {
     if (!verifyCSRF()) {
         $errors[] = 'Token de seguridad inválido.';
     } else {
-        $data = [
-            'codigo'            => getPost('codigo'),
-            'anio'              => getPost('anio'),
-            'area_emisora_id'   => getPost('area_emisora_id'),
-            'area_custodio_id'  => getPost('area_custodio_id'),
-            'tipo_documento_id' => getPost('tipo_documento_id'),
-            'caja_id'           => getPost('caja_id'),
-            'num_folios'        => getPost('num_folios'),
-            'asunto'            => getPost('asunto'),
-            'descripcion'       => getPost('descripcion'),
-            'observaciones'     => getPost('observaciones'),
-            'estado'            => getPost('estado', 'disponible'),
-            'fecha_registro'    => getPost('fecha_registro', date('Y-m-d')),
-            'usuario_registro_id' => Auth::id()
-        ];
+        $codigo     = trim(getPost('codigo_tomo'));
+        $anio       = getPost('anio');
+        $area       = trim(getPost('area'));
+        $tipo       = trim(getPost('tipo_documento'));
 
-        if (empty($data['codigo'])) $errors[] = 'El código es obligatorio.';
-        if (empty($data['asunto'])) $errors[] = 'El asunto es obligatorio.';
-        if (empty($data['anio'])) $errors[] = 'El año es obligatorio.';
+        // ---- Validacion server-side (mensajes claros) ----
+        if (empty($codigo)) {
+            $errors[] = 'El código del tomo es obligatorio.';
+        } elseif (Tomo::existeCodigo($codigo)) {
+            $errors[] = 'El código "'.$codigo.'" ya está registrado. Use un código único.';
+        }
 
-        if (!empty($data['codigo']) && Documento::existeCodigo($data['codigo'])) {
-            $errors[] = 'El código ya está registrado. Use un código único.';
+        if (empty($anio)) {
+            $errors[] = 'El año es obligatorio.';
+        } else {
+            $anio = (int) preg_replace('/[^0-9]/', '', $anio);
+            if ($anio < 1900 || $anio > (int) date('Y') + 1) {
+                $errors[] = 'El año ingresado no es válido (1900 - ' . date('Y') . ').';
+            }
+        }
+
+        if (empty($area)) {
+            $errors[] = 'El área o dependencia es obligatoria.';
+        }
+
+        // Documentos asociados dinámicos
+        $documentos = [];
+        $solicitantes = $_POST['solicitante'] ?? [];
+        $asuntos      = $_POST['asunto'] ?? [];
+        $folios       = $_POST['folios_texto'] ?? [];
+        $expedientes  = $_POST['expediente_texto'] ?? [];
+
+        // Validar que al menos exista un asunto
+        $hayAsunto = false;
+        if (is_array($asuntos)) {
+            foreach ($asuntos as $a) {
+                if (!empty(trim($a))) { $hayAsunto = true; break; }
+            }
+        }
+        if (!$hayAsunto) {
+            $errors[] = 'Debe registrar al menos un asunto (documento) en el tomo.';
+        }
+
+        // Validar folios textuales
+        foreach ($folios as $f) {
+            $f = trim($f);
+            if (!empty($f) && !preg_match('/^[0-9\-\s,a-zA-ZÀ-ÿ]+$/', $f)) {
+                $errors[] = 'El campo folios solo admite valores como: 1-140, INDETERMINADO, SIN FOLIAR.';
+                break;
+            }
         }
 
         if (empty($errors)) {
-            $docId = Documento::create($data);
-            if ($docId) {
-                Historial::registrar($docId, Auth::id(), 'registro', 'Documento registrado en el sistema');
-                Audit::registrar(Auth::id(), 'documento_registro', 'documentos', $docId,
-                    "Documento registrado: {$data['codigo']}");
-                flash('success', "Documento {$data['codigo']} registrado correctamente.");
-                redirect(SITE_URL . '/documentos/ver.php?id=' . $docId);
-            } else {
-                $errors[] = 'Error al registrar el documento.';
+            // Construir lista de documentos
+            if (is_array($solicitantes)) {
+                for ($i = 0; $i < count($solicitantes); $i++) {
+                    $documentos[] = [
+                        'solicitante'      => trim($solicitantes[$i] ?? ''),
+                        'asunto'           => trim($asuntos[$i] ?? ''),
+                        'folios_texto'     => trim($folios[$i] ?? ''),
+                        'expediente_texto' => trim($expedientes[$i] ?? ''),
+                        'anio'             => $anio
+                    ];
+                }
+            }
+
+            try {
+                $idTomo = Tomo::create([
+                    'codigo_tomo'      => $codigo,
+                    'anio'             => $anio,
+                    'area'             => $area,
+                    'tipo_documento'   => $tipo ?: null,
+                    'cantidad_folios'  => getPost('cantidad_folios') !== '' ? getPostInt('cantidad_folios') : null,
+                    'observaciones'    => trim(getPost('observaciones')),
+                    'usuario_registro_id' => Auth::id()
+                ], $documentos);
+
+                Audit::registrar(Auth::id(), 'tomo_registro', 'tomos', $idTomo,
+                    "Tomo registrado manualmente: {$codigo}");
+
+                flash('success', "Tomo {$codigo} registrado correctamente. Ubicación: Pendiente de Asignación / Archivo General.");
+                redirect(SITE_URL . '/documentos/ver_tomo.php?id=' . $idTomo);
+            } catch (Exception $e) {
+                error_log('Error registrando tomo: ' . $e->getMessage());
+                $errors[] = 'Error al registrar el tomo. Intente de nuevo.';
             }
         }
     }
@@ -62,7 +116,7 @@ ob_start();
 
 <?php if (!empty($errors)): ?>
 <div class="alert alert-danger">
-    <strong>Errores:</strong>
+    <strong>No se pudo registrar:</strong>
     <ul style="margin:4px 0 0 16px;">
         <?php foreach ($errors as $err): ?>
         <li><?= sanitize($err) ?></li>
@@ -73,126 +127,135 @@ ob_start();
 
 <div class="card">
     <div class="card-header">
-        <h3>Registro de Nuevo Documento</h3>
+        <h3>Registro de Nuevo Tomo (Documento)</h3>
     </div>
     <div class="card-body">
-        <form method="POST" action="">
+        <form method="POST" action="" id="formRegistro" novalidate>
             <?= csrfField() ?>
 
+            <!-- CABECERA DEL TOMO -->
             <div class="form-row">
                 <div class="form-group">
-                    <label>Código <span class="required">*</span></label>
-                    <input type="text" name="codigo" class="form-control" required
-                           placeholder="Ej: TOMO-001-2026"
-                           value="<?= sanitize(getPost('codigo')) ?>">
+                    <label for="codigo_tomo">Código de Tomo <span class="required">*</span></label>
+                    <input type="text" name="codigo_tomo" id="codigo_tomo" class="form-control"
+                           placeholder="Ej: A-001, CARTAS-012"
+                           value="<?= sanitize(getPost('codigo_tomo')) ?>"
+                           data-requerido="El código del tomo es obligatorio.">
+                    <small class="field-error" id="err_codigo_tomo"></small>
                 </div>
                 <div class="form-group">
-                    <label>Año <span class="required">*</span></label>
-                    <input type="number" name="anio" class="form-control" required
+                    <label for="anio">Año <span class="required">*</span></label>
+                    <input type="number" name="anio" id="anio" class="form-control"
                            min="1900" max="<?= date('Y') ?>"
-                           value="<?= sanitize(getPost('anio', date('Y'))) ?>">
+                           value="<?= sanitize(getPost('anio', date('Y'))) ?>"
+                           data-requerido="El año es obligatorio.">
+                    <small class="field-error" id="err_anio"></small>
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>Área Emisora</label>
-                    <select name="area_emisora_id" class="form-control">
-                        <option value="">Seleccionar...</option>
-                        <?php foreach ($areas as $area): ?>
-                        <option value="<?= $area['id'] ?>" <?= getPost('area_emisora_id') == $area['id'] ? 'selected' : '' ?>>
-                            <?= sanitize($area['nombre']) ?>
+                    <label for="area">Área / Dependencia <span class="required">*</span></label>
+                    <select name="area" id="area" class="form-control"
+                            data-requerido="Seleccione el área o escriba una nueva.">
+                        <option value="">Seleccionar o escribir...</option>
+                        <?php foreach (Tomo::areas() as $areaEx): ?>
+                        <option value="<?= sanitize($areaEx) ?>" <?= getPost('area') === $areaEx ? 'selected' : '' ?>>
+                            <?= sanitize($areaEx) ?>
                         </option>
                         <?php endforeach; ?>
                     </select>
+                    <small class="field-error" id="err_area"></small>
                 </div>
                 <div class="form-group">
-                    <label>Área Custodio</label>
-                    <select name="area_custodio_id" class="form-control">
-                        <option value="">Seleccionar...</option>
-                        <?php foreach ($areas as $area): ?>
-                        <option value="<?= $area['id'] ?>" <?= getPost('area_custodio_id') == $area['id'] ? 'selected' : '' ?>>
-                            <?= sanitize($area['nombre']) ?>
-                        </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Tipo de Documento</label>
-                    <select name="tipo_documento_id" class="form-control">
-                        <option value="">Seleccionar...</option>
+                    <label for="tipo_documento">Tipo de Documento</label>
+                    <select name="tipo_documento" id="tipo_documento" class="form-control">
+                        <option value="">Seleccionar o escribir...</option>
                         <?php foreach ($tipos as $tipo): ?>
-                        <option value="<?= $tipo['id'] ?>" <?= getPost('tipo_documento_id') == $tipo['id'] ? 'selected' : '' ?>>
+                        <option value="<?= sanitize($tipo['nombre']) ?>" <?= getPost('tipo_documento') === $tipo['nombre'] ? 'selected' : '' ?>>
                             <?= sanitize($tipo['nombre']) ?>
                         </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
+            </div>
+
+            <div class="form-row">
                 <div class="form-group">
-                    <label>Número de Folios</label>
-                    <input type="number" name="num_folios" class="form-control"
+                    <label for="cantidad_folios">Cantidad de Folios</label>
+                    <input type="number" name="cantidad_folios" id="cantidad_folios" class="form-control"
                            min="0" placeholder="Ej: 150"
-                           value="<?= sanitize(getPost('num_folios')) ?>">
+                           value="<?= sanitize(getPost('cantidad_folios')) ?>">
+                </div>
+                <div class="form-group">
+                    <label>Estado de Ubicación Física</label>
+                    <div class="location-default">
+                        <span class="badge badge-info">Pendiente de Asignación / Archivo General</span>
+                        <small style="color:var(--text-muted); display:block; margin-top:4px;">
+                            La ubicación topográfica (estante, nivel, caja, ambiente) se organizará en la Fase 2.
+                        </small>
+                    </div>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>Asunto <span class="required">*</span></label>
-                <textarea name="asunto" class="form-control" required rows="3"
-                          placeholder="Descripción breve del contenido del documento..."><?= sanitize(getPost('asunto')) ?></textarea>
+            <!-- DOCUMENTOS DEL TOMO (dinamico) -->
+            <div style="margin-top:20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <h4 style="margin:0; font-size:15px;">Documentos del Tomo</h4>
+                    <button type="button" class="btn btn-outline" onclick="agregarFila()" style="padding:5px 12px; font-size:13px;">
+                        + Agregar Documento
+                    </button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table-main" id="tablaDocs">
+                        <thead>
+                            <tr>
+                                <th style="width:22%;">Solicitante</th>
+                                <th style="width:18%;">Folios (texto)</th>
+                                <th style="width:15%;">Expediente(s)</th>
+                                <th>Asunto <span class="required">*</span></th>
+                                <th style="width:40px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyDocs">
+                            <tr class="fila-doc">
+                                <td>
+                                    <input type="text" name="solicitante[]" class="form-control"
+                                           placeholder="Nombre del solicitante">
+                                </td>
+                                <td>
+                                    <input type="text" name="folios_texto[]" class="form-control"
+                                           placeholder="1-140, INDETERMINADO, SIN FOLIAR">
+                                </td>
+                                <td>
+                                    <input type="text" name="expediente_texto[]" class="form-control"
+                                           placeholder="Ej: 1036|1342">
+                                </td>
+                                <td>
+                                    <input type="text" name="asunto[]" class="form-control"
+                                           placeholder="Descripción del documento" required
+                                           data-requerido="El asunto es obligatorio.">
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-outline btn-quitar"
+                                            onclick="quitarFila(this)" title="Quitar fila">×</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <small class="field-error" id="err_asunto_doc"></small>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label>Descripción</label>
-                <textarea name="descripcion" class="form-control" rows="2"
-                          placeholder="Detalle adicional del documento..."><?= sanitize(getPost('descripcion')) ?></textarea>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Ubicación Física (Caja)</label>
-                    <select name="caja_id" class="form-control">
-                        <option value="">Sin ubicar</option>
-                        <?php
-                        $lastAmb = '';
-                        foreach ($cajas as $caja):
-                            $label = $caja['ambiente_nombre'] . ' / ' . $caja['estante_codigo'] . ' / N' . $caja['nivel_numero'] . ' / Caja ' . $caja['numero'];
-                        ?>
-                        <option value="<?= $caja['id'] ?>" <?= getPost('caja_id') == $caja['id'] ? 'selected' : '' ?>>
-                            <?= sanitize($label) ?>
-                        </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Estado</label>
-                    <select name="estado" class="form-control">
-                        <option value="disponible" <?= getPost('estado') === 'disponible' ? 'selected' : '' ?>>Disponible</option>
-                        <option value="en_revision" <?= getPost('estado') === 'en_revision' ? 'selected' : '' ?>>En Revisión</option>
-                        <option value="inactivo" <?= getPost('estado') === 'inactivo' ? 'selected' : '' ?>>Inactivo</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Fecha de Registro</label>
-                    <input type="date" name="fecha_registro" class="form-control"
-                           value="<?= sanitize(getPost('fecha_registro', date('Y-m-d'))) ?>">
-                </div>
-                <div class="form-group">
-                    <label>Observaciones</label>
-                    <input type="text" name="observaciones" class="form-control"
-                           placeholder="Notas adicionales..."
-                           value="<?= sanitize(getPost('observaciones')) ?>">
-                </div>
+            <div class="form-group" style="margin-top:16px;">
+                <label for="observaciones">Observaciones</label>
+                <textarea name="observaciones" id="observaciones" class="form-control" rows="2"
+                          placeholder="Notas adicionales..."><?= sanitize(getPost('observaciones')) ?></textarea>
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary" id="btnSubmit">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
                         <polyline points="17 21 17 13 7 13 7 21"/>
@@ -205,6 +268,99 @@ ob_start();
         </form>
     </div>
 </div>
+
+<style>
+.field-error { color: var(--danger); font-size: 12px; display: block; margin-top: 3px; }
+.invalid { border-color: var(--danger) !important; }
+.location-default {
+    background: var(--info-light);
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    min-height: 38px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.btn-quitar {
+    padding: 4px 8px; line-height: 1; font-size: 15px;
+    color: var(--danger); border-color: var(--danger);
+}
+.btn-quitar:hover { background: var(--danger); color: #fff; }
+</style>
+
+<script>
+// ---- Validacion HTML5 mejorada ----
+document.addEventListener('DOMContentLoaded', function() {
+    var form = document.getElementById('formRegistro');
+
+    var inputs = form.querySelectorAll('[data-requerido]');
+    inputs.forEach(function(input) {
+        input.addEventListener('input', function() {
+            if (this.value.trim() !== '') {
+                this.classList.remove('invalid');
+                var err = document.getElementById('err_' + this.name.replace('.', '_'));
+                if (err) err.textContent = '';
+            }
+        });
+    });
+
+    form.addEventListener('submit', function(e) {
+        var ok = true;
+
+        // Validar campos requeridos
+        inputs.forEach(function(input) {
+            var valor = input.value.trim();
+            if (valor === '' || (input.type === 'select-one' && valor === '')) {
+                input.classList.add('invalid');
+                var msj = input.getAttribute('data-requerido') || 'Complete este campo.';
+                var err = document.getElementById('err_' + input.name.replace('.', '_'));
+                if (err) err.textContent = msj;
+                ok = false;
+            }
+        });
+
+        // Validar que al menos un asunto este lleno
+        var asuntos = form.querySelectorAll('input[name="asunto[]"]');
+        var hayAsunto = false;
+        asuntos.forEach(function(a) {
+            if (a.value.trim() !== '') hayAsunto = true;
+        });
+        if (!hayAsunto) {
+            document.getElementById('err_asunto_doc').textContent =
+                'Debe registrar al menos un asunto (documento) en el tomo.';
+            asuntos[0].classList.add('invalid');
+            ok = false;
+        } else {
+            document.getElementById('err_asunto_doc').textContent = '';
+        }
+
+        if (!ok) {
+            e.preventDefault();
+            var firstErr = form.querySelector('.invalid');
+            if (firstErr) firstErr.focus();
+        }
+    });
+});
+
+function agregarFila() {
+    var tbody = document.getElementById('tbodyDocs');
+    var row = document.createElement('tr');
+    row.className = 'fila-doc';
+    row.innerHTML =
+        '<td><input type="text" name="solicitante[]" class="form-control" placeholder="Nombre del solicitante"></td>' +
+        '<td><input type="text" name="folios_texto[]" class="form-control" placeholder="1-140, INDETERMINADO, SIN FOLIAR"></td>' +
+        '<td><input type="text" name="expediente_texto[]" class="form-control" placeholder="Ej: 1036|1342"></td>' +
+        '<td><input type="text" name="asunto[]" class="form-control" placeholder="Descripción del documento" required data-requerido="El asunto es obligatorio."></td>' +
+        '<td><button type="button" class="btn btn-sm btn-outline btn-quitar" onclick="quitarFila(this)" title="Quitar fila">×</button></td>';
+    tbody.appendChild(row);
+}
+
+function quitarFila(btn) {
+    var filas = document.querySelectorAll('.fila-doc');
+    if (filas.length <= 1) return; // mantener al menos una fila
+    btn.closest('tr').remove();
+}
+</script>
 
 <?php
 $content = ob_get_clean();

@@ -1,15 +1,18 @@
 <?php
 /**
  * ARCHIVO: index.php
- * DASHBOARD PRINCIPAL DEL SISTEMA
+ * DASHBOARD PRINCIPAL - FASE 1
+ * Resumen del estado del archivo municipal
  */
 require_once 'config/config.php';
 Auth::requireLogin();
 
-$stats = Documento::estadisticas();
-$prestamosStats = Prestamo::estadisticas();
-$vencidos = Prestamo::findVencidos();
-$recientes = Documento::recientes(8);
+// Actualizar estados vencidos
+PrestamoFase1::actualizarEstadoVencidos();
+
+$stats = Tomo::estadisticas();
+$prestamosStats = PrestamoFase1::estadisticas();
+$vencidos = PrestamoFase1::findVencidos();
 
 $pageTitle = 'Dashboard';
 ob_start();
@@ -24,8 +27,8 @@ ob_start();
             </svg>
         </div>
         <div class="stat-info">
-            <h4>Total Documentos</h4>
-            <span class="stat-value"><?= formatNumber($stats['total']) ?></span>
+            <h4>Total Tomos</h4>
+            <span class="stat-value"><?= formatNumber($stats['total_tomos']) ?></span>
         </div>
     </div>
 
@@ -36,8 +39,8 @@ ob_start();
             </svg>
         </div>
         <div class="stat-info">
-            <h4>Disponibles</h4>
-            <span class="stat-value"><?= formatNumber($stats['disponibles']) ?></span>
+            <h4>Documentos</h4>
+            <span class="stat-value"><?= formatNumber($stats['total_documentos']) ?></span>
         </div>
     </div>
 
@@ -49,8 +52,8 @@ ob_start();
             </svg>
         </div>
         <div class="stat-info">
-            <h4>Prestados</h4>
-            <span class="stat-value"><?= formatNumber($stats['prestados']) ?></span>
+            <h4>Prestamos Activos</h4>
+            <span class="stat-value"><?= formatNumber($stats['prestamos_activos']) ?></span>
         </div>
     </div>
 
@@ -78,8 +81,8 @@ ob_start();
             </svg>
         </div>
         <div class="stat-info">
-            <h4>Registrados (30 dias)</h4>
-            <span class="stat-value"><?= formatNumber($stats['recientes_30dias']) ?></span>
+            <h4>Pendientes Asignacion</h4>
+            <span class="stat-value"><?= formatNumber($stats['pendientes_asignacion']) ?></span>
         </div>
     </div>
 
@@ -91,15 +94,15 @@ ob_start();
             </svg>
         </div>
         <div class="stat-info">
-            <h4>Ubicaciones</h4>
-            <span class="stat-value"><?= formatNumber($stats['total_cajas']) ?></span>
+            <h4>Areas Registradas</h4>
+            <span class="stat-value"><?= count(Tomo::areas()) ?></span>
         </div>
     </div>
 </div>
 
 <?php if ($stats['prestamos_vencidos'] > 0): ?>
 <div class="alert alert-danger">
-    <strong>Atención:</strong> Existen <?= $stats['prestamos_vencidos'] ?> préstamo(s) vencido(s) que requieren atención.
+    <strong>Atencion:</strong> Existen <?= $stats['prestamos_vencidos'] ?> prestamo(s) vencido(s) que requieren atencion.
 </div>
 <?php endif; ?>
 
@@ -110,46 +113,14 @@ ob_start();
         </svg>
         <strong>Buscar Documento</strong>
     </a>
-    <?php if (Auth::canWrite()): ?>
-    <a href="<?= SITE_URL ?>/documentos/registrar.php" class="quick-action">
-        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="12" y1="18" x2="12" y2="12"/>
-            <line x1="9" y1="15" x2="15" y2="15"/>
-        </svg>
-        <strong>Registrar Documento</strong>
-    </a>
-    <a href="<?= SITE_URL ?>/prestamos/registrar.php" class="quick-action">
-        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="9 11 12 14 22 4"/>
-            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
-        </svg>
-        <strong>Registrar Préstamo</strong>
-    </a>
-    <a href="<?= SITE_URL ?>/prestamos/devolver.php" class="quick-action">
-        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="1 4 1 10 7 10"/>
-            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
-        </svg>
-        <strong>Devolver Documento</strong>
-    </a>
-    <?php endif; ?>
-    <a href="<?= SITE_URL ?>/documentos/listar.php" class="quick-action">
-        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
-            <line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/>
-            <line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
-        </svg>
-        <strong>Inventario</strong>
-    </a>
     <?php if (Auth::isAdmin()): ?>
-    <a href="<?= SITE_URL ?>/reportes/index.php" class="quick-action">
+    <a href="<?= SITE_URL ?>/importar.php" class="quick-action">
         <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
-            <line x1="6" y1="20" x2="6" y2="14"/>
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
         </svg>
-        <strong>Reportes</strong>
+        <strong>Importar Excel</strong>
     </a>
     <?php endif; ?>
 </div>
@@ -157,38 +128,38 @@ ob_start();
 <div class="grid-2">
     <div class="card">
         <div class="card-header">
-            <h3>Documentos Recientes</h3>
-            <a href="<?= SITE_URL ?>/documentos/listar.php" class="btn btn-sm btn-outline">Ver todos</a>
+            <h3>Prestamos Activos</h3>
         </div>
         <div class="card-body" style="padding:0;">
-            <?php if (empty($recientes)): ?>
+            <?php $activos = PrestamoFase1::findActivos(); ?>
+            <?php if (empty($activos)): ?>
                 <div class="empty-state">
-                    <p>No hay documentos registrados aun.</p>
+                    <p>No hay prestamos activos.</p>
                 </div>
             <?php else: ?>
             <div class="table-wrapper">
                 <table>
                     <thead>
                         <tr>
-                            <th>Código</th>
-                            <th>Asunto</th>
-                            <th>Estado</th>
+                            <th>Tomo</th>
+                            <th>Solicitante</th>
+                            <th>Salida</th>
+                            <th>Devolucion</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($recientes as $doc): ?>
+                        <?php foreach (array_slice($activos, 0, 8) as $p): ?>
                         <tr>
-                            <td><strong><?= sanitize($doc['codigo']) ?></strong></td>
-                            <td><?= sanitize(mb_strimwidth($doc['asunto'], 0, 60, '...')) ?></td>
+                            <td><strong><?= sanitize($p['codigo_tomo']) ?></strong></td>
+                            <td><?= sanitize(mb_strimwidth($p['solicitante_prestamo'], 0, 30, '...')) ?></td>
+                            <td><?= dateFormat($p['fecha_salida']) ?></td>
                             <td>
                                 <?php
-                                $badgeClass = 'badge-default';
-                                if ($doc['estado'] === 'disponible') $badgeClass = 'badge-success';
-                                elseif ($doc['estado'] === 'prestado') $badgeClass = 'badge-warning';
-                                elseif ($doc['estado'] === 'en_revision') $badgeClass = 'badge-info';
-                                elseif ($doc['estado'] === 'inactivo') $badgeClass = 'badge-danger';
+                                $vencida = ($p['fecha_devolucion'] < date('Y-m-d'));
                                 ?>
-                                <span class="badge <?= $badgeClass ?>"><?= ucfirst($doc['estado']) ?></span>
+                                <span style="color:<?= $vencida ? 'var(--danger)' : 'inherit' ?>">
+                                    <?= dateFormat($p['fecha_devolucion']) ?>
+                                </span>
                             </td>
                         </tr>
                         <?php endforeach; ?>
@@ -201,7 +172,7 @@ ob_start();
 
     <div class="card">
         <div class="card-header">
-            <h3>Documentos por Área Emisora</h3>
+            <h3>Documentos por Area</h3>
         </div>
         <div class="card-body" style="padding:0;">
             <?php if (empty($stats['por_area'])): ?>
@@ -213,14 +184,14 @@ ob_start();
                 <table>
                     <thead>
                         <tr>
-                            <th>Área</th>
-                            <th style="text-align:right;">Cantidad</th>
+                            <th>Area</th>
+                            <th style="text-align:right;">Tomos</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($stats['por_area'] as $area): ?>
                         <tr>
-                            <td><?= sanitize($area['area']) ?></td>
+                            <td><?= sanitize($area['area'] ?? 'Sin area') ?></td>
                             <td style="text-align:right; font-weight:600;"><?= formatNumber((int)$area['total']) ?></td>
                         </tr>
                         <?php endforeach; ?>
@@ -235,39 +206,7 @@ ob_start();
 <div class="grid-2" style="margin-top:20px;">
     <div class="card">
         <div class="card-header">
-            <h3>Documentos por Tipo</h3>
-        </div>
-        <div class="card-body" style="padding:0;">
-            <?php if (empty($stats['por_tipo'])): ?>
-                <div class="empty-state">
-                    <p>Sin datos disponibles.</p>
-                </div>
-            <?php else: ?>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Tipo</th>
-                            <th style="text-align:right;">Cantidad</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($stats['por_tipo'] as $tipo): ?>
-                        <tr>
-                            <td><?= sanitize($tipo['tipo']) ?></td>
-                            <td style="text-align:right; font-weight:600;"><?= formatNumber((int)$tipo['total']) ?></td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-            <?php endif; ?>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header">
-            <h3>Documentos por Año</h3>
+            <h3>Tomos por Ano</h3>
         </div>
         <div class="card-body" style="padding:0;">
             <?php if (empty($stats['por_anio'])): ?>
@@ -279,7 +218,7 @@ ob_start();
                 <table>
                     <thead>
                         <tr>
-                            <th>Año</th>
+                            <th>Ano</th>
                             <th style="text-align:right;">Cantidad</th>
                         </tr>
                     </thead>
@@ -294,6 +233,38 @@ ob_start();
                 </table>
             </div>
             <?php endif; ?>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3>Ubicacion de Tomos</h3>
+        </div>
+        <div class="card-body" style="padding:0;">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Estado</th>
+                            <th style="text-align:right;">Cantidad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="badge badge-success">Disponible</span></td>
+                            <td style="text-align:right; font-weight:600;"><?= formatNumber($stats['total_tomos'] - $stats['prestados'] - $stats['pendientes_asignacion']) ?></td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-warning">Prestado</span></td>
+                            <td style="text-align:right; font-weight:600;"><?= formatNumber($stats['prestados']) ?></td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-info">Pendiente Asignacion</span></td>
+                            <td style="text-align:right; font-weight:600;"><?= formatNumber($stats['pendientes_asignacion']) ?></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

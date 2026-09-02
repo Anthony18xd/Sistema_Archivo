@@ -42,6 +42,11 @@ function getQuery(string $key, $default = ''): string {
     return isset($_GET[$key]) ? sanitize($_GET[$key]) : $default;
 }
 
+function getQueryInt(string $key, int $default = 0): int {
+    $value = getQuery($key);
+    return $value !== '' ? (int) $value : $default;
+}
+
 function setSession(string $key, $value): void {
     $_SESSION[$key] = $value;
 }
