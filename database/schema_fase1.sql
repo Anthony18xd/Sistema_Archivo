@@ -83,6 +83,7 @@ CREATE TABLE `documentos_fase1` (
   `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_documento`),
   KEY `fk_doc_fase1_tomo` (`id_tomo`),
+  UNIQUE KEY `uq_doc_fase1_origen` (`id_tomo`, `hoja_origen`, `fila_origen`),
   KEY `idx_doc_fase1_anio` (`anio`),
   KEY `idx_doc_fase1_solicitante` (`solicitante`),
   KEY `idx_doc_fase1_estado` (`estado`),

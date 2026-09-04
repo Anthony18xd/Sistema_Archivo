@@ -635,6 +635,16 @@ function procesarDocumentos(
     // Detectar fila de inicio (saltar encabezados)
     $filaInicio = detectarFilaInicioDocumentos($sheet, $totalCols);
 
+    // Filas ya importadas para este tomo/pestana.
+    // Hace la importacion idempotente: re-subir el mismo archivo
+    // no vuelve a insertar documentos (evita duplicados en el inventario).
+    $stmtExistentes = $pdo->prepare(
+        "SELECT fila_origen FROM documentos_fase1
+         WHERE id_tomo = :id_tomo AND hoja_origen = :hoja AND fila_origen IS NOT NULL"
+    );
+    $stmtExistentes->execute([':id_tomo' => $idTomo, ':hoja' => $nombreHoja]);
+    $filasExistentes = array_flip(array_map('intval', $stmtExistentes->fetchAll(PDO::FETCH_COLUMN)));
+
     // Preparar statements
     $stmtDoc = $pdo->prepare(
         "INSERT INTO documentos_fase1 (id_tomo, anio, solicitante, folios_texto,
@@ -665,6 +675,12 @@ function procesarDocumentos(
             if (empty($solicitante) && empty($folios) && empty($expediente) && empty($asunto)) {
                 continue;
             }
+
+            // Saltar filas ya importadas (idempotencia)
+            if (isset($filasExistentes[$row])) {
+                continue;
+            }
+            $filasExistentes[$row] = true;
 
             // El guion "-" en expediente significa "sin expediente"
             if ($expediente === '-' || $expediente === '—') {
