@@ -88,6 +88,12 @@ a:hover {
     flex-shrink: 0;
 }
 
+.sidebar-logo img {
+    height: 34px;
+    width: auto;
+    display: block;
+}
+
 .sidebar-title strong {
     display: block;
     font-size: 14px;

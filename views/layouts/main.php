@@ -13,6 +13,7 @@ if (!Auth::check()) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $pageTitle ?? 'Inicio' ?> - <?= SITE_NAME ?></title>
+    <link rel="icon" type="image/png" href="<?= SITE_URL ?>/imagenes/icono.png">
     <link rel="stylesheet" href="<?= SITE_URL ?>/css/style.css">
 </head>
 <body>
@@ -20,13 +21,7 @@ if (!Auth::check()) {
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="sidebar-logo">
-                    <svg viewBox="0 0 64 64" width="32" height="32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="8" y="4" width="48" height="56" rx="4" stroke="currentColor" stroke-width="3" fill="none"/>
-                        <rect x="16" y="12" width="32" height="6" rx="2" fill="currentColor" opacity="0.3"/>
-                        <rect x="16" y="22" width="32" height="3" rx="1.5" fill="currentColor" opacity="0.2"/>
-                        <rect x="16" y="28" width="24" height="3" rx="1.5" fill="currentColor" opacity="0.2"/>
-                        <rect x="16" y="42" width="32" height="6" rx="2" fill="currentColor" opacity="0.3"/>
-                    </svg>
+                    <img src="<?= SITE_URL ?>/imagenes/icono.png" alt="Archivo Municipal">
                 </div>
                 <div class="sidebar-title">
                     <strong>ARCHIVO</strong>

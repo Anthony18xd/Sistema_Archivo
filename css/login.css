@@ -29,13 +29,13 @@
 
 body.login-page {
     font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-    background: var(--primary-dark);
-    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--text);
+    background: linear-gradient(rgba(15, 36, 64, 0.82), rgba(15, 36, 64, 0.82)),
+                url('../imagenes/fondo_inicio.png') center / cover no-repeat fixed;
 }
 
 .login-container {
@@ -59,6 +59,12 @@ body.login-page {
 .login-logo {
     color: var(--primary);
     margin-bottom: 16px;
+}
+
+.login-logo img {
+    width: 88px;
+    height: auto;
+    display: inline-block;
 }
 
 .login-header h1 {

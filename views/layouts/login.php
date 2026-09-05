@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión - <?= SITE_NAME ?></title>
+    <link rel="icon" type="image/png" href="<?= SITE_URL ?>/imagenes/icono.png">
     <link rel="stylesheet" href="<?= SITE_URL ?>/css/login.css">
 </head>
 <body class="login-page">
@@ -11,15 +12,7 @@
         <div class="login-card">
             <div class="login-header">
                 <div class="login-logo">
-                    <svg viewBox="0 0 64 64" width="64" height="64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="8" y="4" width="48" height="56" rx="4" stroke="currentColor" stroke-width="3" fill="none"/>
-                        <rect x="16" y="12" width="32" height="6" rx="2" fill="currentColor" opacity="0.3"/>
-                        <rect x="16" y="22" width="32" height="3" rx="1.5" fill="currentColor" opacity="0.2"/>
-                        <rect x="16" y="28" width="24" height="3" rx="1.5" fill="currentColor" opacity="0.2"/>
-                        <rect x="16" y="34" width="28" height="3" rx="1.5" fill="currentColor" opacity="0.2"/>
-                        <rect x="16" y="42" width="32" height="6" rx="2" fill="currentColor" opacity="0.3"/>
-                        <rect x="16" y="52" width="20" height="3" rx="1.5" fill="currentColor" opacity="0.2"/>
-                    </svg>
+                    <img src="<?= SITE_URL ?>/imagenes/icono.png" alt="Logo Archivo Municipal">
                 </div>
                 <h1><?= sanitize(SITE_NAME) ?></h1>
                 <p class="login-subtitle">Sistema Integral de Gestión y Control<br>de Archivo Físico Municipal</p>
