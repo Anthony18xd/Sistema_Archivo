@@ -36,7 +36,8 @@ if (isPost()) {
             if (empty($data['apellidos'])) $errors[] = 'Los apellidos son obligatorios.';
             if (empty($data['username'])) $errors[] = 'El usuario es obligatorio.';
             if (empty($data['password'])) $errors[] = 'La contraseña es obligatoria.';
-            if (strlen($data['password']) < 6) $errors[] = 'La contraseña debe tener al menos 6 caracteres.';
+            if (strlen($data['password']) < 8) $errors[] = 'La contraseña debe tener al menos 8 caracteres.';
+            if ($data['password'] === $data['username']) $errors[] = 'La contraseña no puede ser igual al usuario.';
             if (!empty($data['dni']) && strlen($data['dni']) > 8) $errors[] = 'El DNI debe tener como máximo 8 caracteres.';
             if (!empty($data['telefono']) && strlen($data['telefono']) > 9) $errors[] = 'El teléfono debe tener como máximo 9 caracteres.';
             if (!empty($data['dni']) && !ctype_digit($data['dni'])) $errors[] = 'El DNI debe contener solo números.';
@@ -82,7 +83,8 @@ if (isPost()) {
             $password = getPost('password');
             if (!empty($password)) {
                 $data['password'] = $password;
-                if (strlen($password) < 6) $errors[] = 'La contraseña debe tener al menos 6 caracteres.';
+                if (strlen($password) < 8) $errors[] = 'La contraseña debe tener al menos 8 caracteres.';
+                if ($password === $data['username']) $errors[] = 'La contraseña no puede ser igual al usuario.';
             }
 
             if (empty($data['nombres'])) $errors[] = 'Los nombres son obligatorios.';

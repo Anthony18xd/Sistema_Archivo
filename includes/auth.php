@@ -31,6 +31,7 @@ class Auth {
             $_SESSION['user_rol_nombre'] = $user['rol_nombre'];
             $_SESSION['user_permisos'] = json_decode($user['permisos'], true);
             $_SESSION['logged_in'] = true;
+            $_SESSION['last_activity'] = time();
 
             Audit::registrar($user['id'], 'inicio_sesion', null, null, 'Inicio de sesión exitoso');
 

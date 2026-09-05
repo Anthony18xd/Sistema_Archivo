@@ -183,7 +183,7 @@ ob_start();
                             <?php if (!empty($doc['hoja_origen']) || !empty($doc['fila_origen'])): ?>
                                 <small style="color:var(--text-muted);">
                                     Hoja: <?= sanitize($doc['hoja_origen'] ?? '-') ?>
-                                    · Fila: <?= $doc['fila_origen'] ?? '-' ?>
+                                    · Fila: <?= sanitize($doc['fila_origen'] ?? '-') ?>
                                 </small>
                             <?php else: ?>
                                 <small style="color:var(--text-muted);">Manual</small>

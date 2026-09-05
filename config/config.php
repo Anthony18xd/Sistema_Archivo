@@ -35,19 +35,39 @@ ini_set('log_errors', 1);
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: SAMEORIGIN');
 header('Referrer-Policy: strict-origin-when-cross-origin');
+header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'");
+
+$esHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+    || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
+if ($esHttps) {
+    header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
+}
 
 // ---- Hardening de sesion ----
 ini_set('session.use_strict_mode', '1');
 ini_set('session.use_only_cookies', '1');
+ini_set('session.cookie_httponly', '1');
 session_set_cookie_params([
     'lifetime' => SESSION_LIFETIME,
     'path'     => '/',
     'httponly' => true,
     'samesite' => 'Lax',
-    'secure'   => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
+    'secure'   => $esHttps,
 ]);
 
 session_start();
+
+// ---- Timeout por inactividad: si supera SESSION_LIFETIME, se cierra la sesion ----
+if (!empty($_SESSION['user_id'])) {
+    $ahora = time();
+    if (!isset($_SESSION['last_activity']) || ($ahora - (int) $_SESSION['last_activity']) > SESSION_LIFETIME) {
+        session_unset();
+        session_destroy();
+        session_start();
+    } else {
+        $_SESSION['last_activity'] = $ahora;
+    }
+}
 
 require_once PATH_INCLUDES . '/database.php';
 require_once PATH_INCLUDES . '/helpers.php';

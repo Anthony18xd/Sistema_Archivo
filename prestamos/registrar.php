@@ -115,7 +115,7 @@ ob_start();
                 <?php else: ?>
                 <input type="number" name="documento_id" class="form-control" required
                        placeholder="Ingrese el ID del documento"
-                       value="<?= getPost('documento_id') ?>">
+                       value="<?= sanitize(getPost('documento_id')) ?>">
                 <small style="color:var(--text-muted);">Puede buscar el documento primero en la busqueda y venir con el ID.</small>
                 <?php endif; ?>
             </div>

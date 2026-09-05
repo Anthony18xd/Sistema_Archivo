@@ -30,7 +30,8 @@ function isPost(): bool {
 }
 
 function getPost(string $key, $default = ''): string {
-    return isset($_POST[$key]) ? sanitize($_POST[$key]) : $default;
+    // El valor se devuelve en crudo; el escape (sanitize) se hace al imprimir.
+    return isset($_POST[$key]) ? trim((string) $_POST[$key]) : $default;
 }
 
 function getPostInt(string $key, int $default = 0): int {
@@ -39,7 +40,8 @@ function getPostInt(string $key, int $default = 0): int {
 }
 
 function getQuery(string $key, $default = ''): string {
-    return isset($_GET[$key]) ? sanitize($_GET[$key]) : $default;
+    // El valor se devuelve en crudo; el escape (sanitize) se hace al imprimir.
+    return isset($_GET[$key]) ? trim((string) $_GET[$key]) : $default;
 }
 
 function getQueryInt(string $key, int $default = 0): int {

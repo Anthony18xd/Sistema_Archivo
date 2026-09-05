@@ -189,7 +189,7 @@ if (!Auth::check()) {
 
             <div class="content-wrapper">
                 <?php $flash = getFlash(); if ($flash): ?>
-                    <div class="alert alert-<?= $flash['type'] ?>"><?= $flash['message'] ?></div>
+                    <div class="alert alert-<?= in_array($flash['type'], ['success', 'danger', 'warning', 'info']) ? $flash['type'] : 'info' ?>"><?= sanitize($flash['message']) ?></div>
                 <?php endif; ?>
 
                 <?= $content ?>

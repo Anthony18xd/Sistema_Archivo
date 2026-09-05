@@ -8,10 +8,17 @@ RewriteRule ^(.*)$ index.php [QSA,L]
 <IfModule mod_headers.c>
     Header set X-Content-Type-Options "nosniff"
     Header set X-Frame-Options "SAMEORIGIN"
-    Header set X-XSS-Protection "1; mode=block"
     Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
 </IfModule>
 
-<FilesMatch "\.(sql|log|env)$">
+<FilesMatch "\.(sql|log|env|json|lock|ini|md|yml|yaml|pem|key|crt|p12|cnf|dist|bak|conf|properties)$">
     Require all denied
 </FilesMatch>
+
+<FilesMatch "^(composer\.json|composer\.lock|server\.log|README\.md)$">
+    Require all denied
+</FilesMatch>
+
+RedirectMatch 403 ^/\.git(/.*)?$
+RedirectMatch 403 ^/vendor(/.*)?$

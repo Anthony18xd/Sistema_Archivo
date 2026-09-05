@@ -45,6 +45,27 @@
             $pdo->exec("CREATE DATABASE IF NOT EXISTS `{$dbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
             echo "Base de datos '{$dbName}' creada/verificada.\n";
             $pdo->exec("USE `{$dbName}`");
+
+            // Seguridad: impedir reinstalacion si el sistema ya tiene datos
+            $tieneUsuarios = false;
+            try {
+                $chequeo = $pdo->query(
+                    "SELECT COUNT(*) FROM information_schema.tables
+                     WHERE table_schema = '{$dbName}' AND table_name = 'usuarios'"
+                );
+                if ((int) $chequeo->fetchColumn() > 0) {
+                    $tieneUsuarios = (int) $pdo->query("SELECT COUNT(*) FROM usuarios")->fetchColumn() > 0;
+                }
+            } catch (PDOException $e) {
+                $tieneUsuarios = false;
+            }
+
+            if ($tieneUsuarios) {
+                echo "ERROR: El sistema ya se encuentra instalado con datos.\n";
+                echo "Para reinstalar elimine primero la base de datos o borre este archivo (install.php).\n";
+                echo '</pre></div></body></html>';
+                exit;
+            }
         } catch (PDOException $e) {
             echo "ERROR: " . $e->getMessage() . "\n";
             echo '</pre></div></body></html>';

@@ -28,6 +28,10 @@ if (isPost()) {
         // ---- Validacion server-side (mensajes claros) ----
         if (empty($codigo)) {
             $errors[] = 'El código del tomo es obligatorio.';
+        } elseif (strlen($codigo) > 50) {
+            $errors[] = 'El código del tomo no puede superar 50 caracteres.';
+        } elseif (!preg_match("/^[\p{L}0-9 _\-.\/]+$/u", $codigo)) {
+            $errors[] = 'El código solo puede contener letras, números, espacios, guiones y puntos.';
         } elseif (Tomo::existeCodigo($codigo)) {
             $errors[] = 'El código "'.$codigo.'" ya está registrado. Use un código único.';
         }

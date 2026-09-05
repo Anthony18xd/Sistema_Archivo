@@ -74,8 +74,13 @@ mysql -h 127.0.0.1 -u root -p archivo_municipal < database/seed.sql
 
 ```bash
 # php -S localhost:8080 -t .
-php -S 172.40.15.59:8080 -t .
+php -S 172.40.15.59:8080 -t . server_router.php
 ```
+
+> El router `server_router.php` es obligatorio: bloquea el acceso web a archivos
+> sensibles (`.sql`, `.log`, `config/`, `includes/`, `models/`, `database/`,
+> `vendor/`, `.git/`, `composer.*`, `install.php`) porque el servidor integrado
+> de PHP no aplica `.htaccess`.
 
 **Opción B — XAMPP / WAMP / LAMP:** copia la carpeta del proyecto dentro de `htdocs` (XAMPP) o `www` (WAMP) y accede desde `http://172.40.15.59/Sistema_Archivo` (`http://localhost/Sistema_Archivo` de forma local).
 

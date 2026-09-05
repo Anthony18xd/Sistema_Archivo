@@ -44,6 +44,9 @@ if (isPost()) {
 
         if (empty($data['codigo'])) $errors[] = 'El código es obligatorio.';
         if (strlen($data['codigo']) > 50) $errors[] = 'El código no puede superar 50 caracteres.';
+        if (!empty($data['codigo']) && !preg_match("/^[\p{L}0-9 _\-.\/]+$/u", $data['codigo'])) {
+            $errors[] = 'El código solo puede contener letras, números, espacios, guiones y puntos.';
+        }
         if (empty($data['asunto'])) $errors[] = 'El asunto es obligatorio.';
         if (strlen($data['asunto']) > 500) $errors[] = 'El asunto no puede superar 500 caracteres.';
         if (empty($data['anio'])) $errors[] = 'El año es obligatorio.';
