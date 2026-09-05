@@ -100,7 +100,19 @@ class Ubicacion {
 
     // ---- CAJAS ----
     public static function cajas(int $nivelId): array {
-        $stmt = db()->prepare("SELECT * FROM cajas WHERE nivel_id = :nivel_id AND estado = 1 ORDER BY numero");
+        $stmt = db()->prepare(
+            "SELECT c.*,
+                    n.numero AS nivel_numero,
+                    e.codigo AS estante_codigo,
+                    e.nombre AS estante_nombre,
+                    a.nombre AS ambiente_nombre
+             FROM cajas c
+             JOIN niveles n ON c.nivel_id = n.id
+             JOIN estantes e ON n.estante_id = e.id
+             JOIN ambientes a ON e.ambiente_id = a.id
+             WHERE c.nivel_id = :nivel_id AND c.estado = 1
+             ORDER BY c.numero"
+        );
         $stmt->execute([':nivel_id' => $nivelId]);
         return $stmt->fetchAll();
     }

@@ -43,6 +43,7 @@ CREATE TABLE `tomos` (
   `tipo_documento` VARCHAR(150) DEFAULT NULL COMMENT 'Tipo de documento (Oficio, Resolucion, Carta, etc.)',
   `cantidad_folios` INT DEFAULT NULL COMMENT 'Cantidad total de folios del tomo',
   `ubicacion_estado` ENUM('pendiente_asignacion', 'asignado', 'prestado', 'en_revision') NOT NULL DEFAULT 'pendiente_asignacion' COMMENT 'Estado de ubicacion fisica',
+  `caja_id` INT UNSIGNED DEFAULT NULL COMMENT 'Ubicacion fisica: caja donde se guarda el tomo (Fase 2)',
   `fuente_importacion` VARCHAR(255) DEFAULT NULL COMMENT 'Nombre del archivo Excel de origen (trazabilidad ETL)',
   `usuario_registro_id` INT UNSIGNED DEFAULT NULL COMMENT 'Usuario que registro el tomo',
   `observaciones` TEXT DEFAULT NULL,
@@ -51,13 +52,15 @@ CREATE TABLE `tomos` (
   `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_tomo`),
   UNIQUE KEY `uq_tomos_codigo` (`codigo_tomo`),
+  KEY `idx_tomos_caja` (`caja_id`),
   KEY `idx_tomos_anio` (`anio`),
   KEY `idx_tomos_area` (`area`),
   KEY `idx_tomos_tipo` (`tipo_documento`),
   KEY `idx_tomos_estado_ubicacion` (`ubicacion_estado`),
   KEY `idx_tomos_estado` (`estado`),
   KEY `idx_tomos_fuente` (`fuente_importacion`),
-  FULLTEXT KEY `ft_tomos_busqueda` (`codigo_tomo`, `area`, `tipo_documento`)
+  FULLTEXT KEY `ft_tomos_busqueda` (`codigo_tomo`, `area`, `tipo_documento`),
+  CONSTRAINT `fk_tomos_caja` FOREIGN KEY (`caja_id`) REFERENCES `cajas` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------

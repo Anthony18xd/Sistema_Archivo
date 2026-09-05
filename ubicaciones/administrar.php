@@ -42,6 +42,29 @@ if (isPost()) {
                 redirect(SITE_URL . '/ubicaciones/administrar.php?action=list');
             }
 
+        } elseif ($actionType === 'crear_nivel') {
+            $data = ['estante_id' => getPostInt('estante_id'), 'numero' => getPostInt('numero'), 'descripcion' => getPost('descripcion')];
+            if (!existeRegistro('estantes', 'id', (int) $data['estante_id'])) {
+                $errors[] = 'El estante seleccionado no es válido.';
+            }
+            if ($data['numero'] <= 0) $errors[] = 'El número de nivel debe ser positivo.';
+
+            if (empty($errors)) {
+                // Evitar duplicado del par (estante, numero)
+                $stmt = db()->prepare("SELECT COUNT(*) FROM niveles WHERE estante_id = :estante_id AND numero = :numero AND estado = 1");
+                $stmt->execute([':estante_id' => $data['estante_id'], ':numero' => $data['numero']]);
+                if ((int) $stmt->fetchColumn() > 0) {
+                    $errors[] = 'Ese número de nivel ya existe en el estante seleccionado.';
+                }
+            }
+
+            if (empty($errors)) {
+                Ubicacion::crearNivel($data);
+                Audit::registrar(Auth::id(), 'ubicacion_creacion', 'niveles', null, "Nivel {$data['numero']} creado en estante {$data['estante_id']}");
+                flash('success', 'Nivel creado.');
+                redirect(SITE_URL . '/ubicaciones/administrar.php?action=list');
+            }
+
         } elseif ($actionType === 'crear_caja') {
             $data = ['nivel_id' => getPostInt('nivel_id'), 'numero' => getPostInt('numero'), 'codigo' => getPost('codigo'), 'descripcion' => getPost('descripcion'), 'capacidad' => getPostInt('capacidad')];
             if (empty($data['numero'])) $errors[] = 'El número de caja es obligatorio.';
@@ -142,7 +165,26 @@ ob_start();
                     <div class="form-group"><input type="text" name="codigo" class="form-control" placeholder="Código" required></div>
                     <div class="form-group"><input type="text" name="nombre" class="form-control" placeholder="Nombre" required></div>
                 </div>
-                <button type="submit" class="btn btn-primary btn-sm btn-block">+ Agregar</button>
+                <button type="submit" class="btn btn-primary btn-sm btn-block">+ Agregar Estante</button>
+            </form>
+        </div>
+        <div class="card-body" style="border-top:1px solid var(--border-light);">
+            <form method="POST" action="">
+                <?= csrfField() ?>
+                <input type="hidden" name="action" value="crear_nivel">
+                <div class="form-group">
+                    <select name="estante_id" class="form-control" required>
+                        <option value="">Estante para el nivel...</option>
+                        <?php foreach ($estantes as $e): ?>
+                        <option value="<?= $e['id'] ?>"><?= sanitize($e['codigo']) ?> - <?= sanitize($e['nombre']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><input type="number" name="numero" class="form-control" placeholder="N. nivel" required min="1"></div>
+                    <div class="form-group"><input type="text" name="descripcion" class="form-control" placeholder="Descripción"></div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm btn-block">+ Agregar Nivel</button>
             </form>
         </div>
     </div>

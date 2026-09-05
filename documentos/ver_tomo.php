@@ -80,7 +80,16 @@ ob_start();
                 <tr>
                     <th>Ubicación Física</th>
                     <td>
-                        <?php if ($tomo['ubicacion_estado'] === 'pendiente_asignacion'): ?>
+                        <?php if (!empty($tomo['caja_id'])): ?>
+                            <span class="badge badge-success">
+                                <?= sanitize(implode(' / ', array_filter([
+                                    $tomo['ambiente_nombre'] ?? null,
+                                    $tomo['estante_codigo'] ?? null,
+                                    ($tomo['nivel_numero'] ? 'Nivel ' . $tomo['nivel_numero'] : null),
+                                    ($tomo['caja_numero'] ? 'Caja ' . $tomo['caja_numero'] : null),
+                                ]))) ?>
+                            </span>
+                        <?php elseif ($tomo['ubicacion_estado'] === 'pendiente_asignacion'): ?>
                             <span class="badge badge-info">Pendiente de Asignación / Archivo General</span>
                         <?php else: ?>
                             <span class="badge badge-default"><?= ucfirst(str_replace('_', ' ', $tomo['ubicacion_estado'])) ?></span>
@@ -108,6 +117,40 @@ ob_start();
                     </td>
                 </tr>
             </table>
+
+            <?php if (Auth::canWrite()): ?>
+            <form method="POST" action="<?= SITE_URL ?>/documentos/asignar_ubicacion.php"
+                  style="margin-top:16px; padding-top:16px; border-top:1px solid var(--border-light);">
+                <?= csrfField() ?>
+                <input type="hidden" name="id_tomo" value="<?= (int) $tomo['id_tomo'] ?>">
+                <label style="display:block; font-size:12px; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px;">
+                    Ubicación física (caja)
+                </label>
+                <?php $cajasUbicacion = Ubicacion::todasLasCajas(); ?>
+                <?php if (empty($cajasUbicacion)): ?>
+                    <div class="alert alert-warning" style="margin:0 0 8px;">
+                        No hay cajas registradas. Crea ambientes, estantes, niveles y cajas en
+                        <a href="<?= SITE_URL ?>/ubicaciones/administrar.php">Administrar Ubicaciones</a>.
+                    </div>
+                <?php else: ?>
+                    <div class="form-row">
+                        <div class="form-group" style="margin:0;">
+                            <select name="caja_id" class="form-control">
+                                <option value="">— Sin ubicación (Archivo General) —</option>
+                                <?php foreach ($cajasUbicacion as $cu): ?>
+                                <option value="<?= $cu['id'] ?>" <?= ($tomo['caja_id'] == $cu['id']) ? 'selected' : '' ?>>
+                                    <?= sanitize($cu['ambiente_nombre'] . ' / ' . $cu['estante_codigo'] . ' / N' . $cu['nivel_numero'] . ' / Caja ' . $cu['numero']) ?>
+                                </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin:0;">
+                            <button type="submit" class="btn btn-primary btn-sm btn-block">Guardar Ubicación</button>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            </form>
+            <?php endif; ?>
         </div>
     </div>
 

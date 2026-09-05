@@ -134,7 +134,20 @@ ob_start();
                         <td><?= sanitize($tomo['tipo_documento'] ?? '-') ?></td>
                         <td><?= (int)$tomo['total_documentos'] ?></td>
                         <td>
-                            <?php if ($tomo['ubicacion_estado'] === 'pendiente_asignacion'): ?>
+                            <?php if (!empty($tomo['caja_id'])): ?>
+                                <span class="badge badge-success" title="<?= sanitize(implode(' / ', array_filter([
+                                    $tomo['ambiente_nombre'] ?? '',
+                                    $tomo['estante_codigo'] ?? '',
+                                    ($tomo['nivel_numero'] ? 'Nivel ' . $tomo['nivel_numero'] : ''),
+                                    ($tomo['caja_numero'] ? 'Caja ' . $tomo['caja_numero'] : ''),
+                                ]))) ?>">
+                                    <?= sanitize(implode(' / ', array_filter([
+                                        $tomo['ambiente_nombre'] ?? '',
+                                        $tomo['estante_codigo'] ?? '',
+                                        $tomo['caja_numero'] ? 'Caja ' . $tomo['caja_numero'] : '',
+                                    ]))) ?>
+                                </span>
+                            <?php elseif ($tomo['ubicacion_estado'] === 'pendiente_asignacion'): ?>
                                 <span class="badge badge-info">Pend. Asignación</span>
                             <?php else: ?>
                                 <span class="badge badge-default"><?= ucfirst(str_replace('_', ' ', $tomo['ubicacion_estado'])) ?></span>

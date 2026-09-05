@@ -10,6 +10,10 @@ class Tomo {
     public static function findById(int $id): ?array {
         $stmt = db()->prepare(
             "SELECT t.*,
+                    c.codigo AS caja_codigo, c.numero AS caja_numero, c.capacidad AS caja_capacidad,
+                    n.numero AS nivel_numero,
+                    e.codigo AS estante_codigo, e.nombre AS estante_nombre,
+                    a.nombre AS ambiente_nombre,
                     (SELECT COUNT(*) FROM documentos_fase1 df WHERE df.id_tomo = t.id_tomo) AS total_documentos,
                     (SELECT GROUP_CONCAT(DISTINCT de.numero_expediente_unificado SEPARATOR ', ')
                      FROM documento_expedientes de
@@ -20,6 +24,10 @@ class Tomo {
                         WHERE pf.id_tomo = t.id_tomo AND pf.estado = 'activo'
                     ) THEN 1 ELSE 0 END AS esta_prestado
              FROM tomos t
+             LEFT JOIN cajas c ON t.caja_id = c.id
+             LEFT JOIN niveles n ON c.nivel_id = n.id
+             LEFT JOIN estantes e ON n.estante_id = e.id
+             LEFT JOIN ambientes a ON e.ambiente_id = a.id
              WHERE t.id_tomo = :id
              LIMIT 1"
         );
@@ -77,13 +85,21 @@ class Tomo {
         $where = implode(' AND ', $conditions);
 
         $sql = "SELECT t.id_tomo, t.codigo_tomo, t.anio, t.area, t.tipo_documento,
-                       t.cantidad_folios, t.ubicacion_estado, t.estado, t.created_at,
+                       t.cantidad_folios, t.ubicacion_estado, t.caja_id, t.estado, t.created_at,
+                       c.codigo AS caja_codigo, c.numero AS caja_numero,
+                       n.numero AS nivel_numero,
+                       e.codigo AS estante_codigo, e.nombre AS estante_nombre,
+                       a.nombre AS ambiente_nombre,
                        (SELECT COUNT(*) FROM documentos_fase1 df WHERE df.id_tomo = t.id_tomo) AS total_documentos,
                        CASE WHEN EXISTS (
                            SELECT 1 FROM prestamos_fase1 pf
                            WHERE pf.id_tomo = t.id_tomo AND pf.estado = 'activo'
                        ) THEN 'prestado' ELSE 'disponible' END AS estado_prestamo
                 FROM tomos t
+                LEFT JOIN cajas c ON t.caja_id = c.id
+                LEFT JOIN niveles n ON c.nivel_id = n.id
+                LEFT JOIN estantes e ON n.estante_id = e.id
+                LEFT JOIN ambientes a ON e.ambiente_id = a.id
                 WHERE {$where}
                 ORDER BY t.codigo_tomo ASC
                 LIMIT :limit OFFSET :offset";
@@ -211,6 +227,25 @@ class Tomo {
         $stats['por_area'] = $stmt->fetchAll();
 
         return $stats;
+    }
+
+    /**
+     * Asigna (o desasigna) la ubicacion fisica de un tomo.
+     * Al asignar una caja, el tomo pasa a 'asignado'; al quitarla,
+     * vuelve a 'pendiente_asignacion'.
+     */
+    public static function asignarCaja(int $idTomo, ?int $cajaId): bool {
+        $stmt = db()->prepare(
+            "UPDATE tomos
+             SET caja_id = :caja,
+                 ubicacion_estado = CASE WHEN :caja_es_null = 1 THEN 'pendiente_asignacion' ELSE 'asignado' END
+             WHERE id_tomo = :id AND estado = 'activo'"
+        );
+        $stmt->bindValue(':caja', $cajaId, $cajaId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        $stmt->bindValue(':caja_es_null', $cajaId === null ? 1 : 0, PDO::PARAM_INT);
+        $stmt->bindValue(':id', $idTomo, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->rowCount() > 0;
     }
 
     public static function existeCodigo(string $codigo, ?int $excludeId = null): bool {

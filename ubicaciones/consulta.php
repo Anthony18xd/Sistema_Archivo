@@ -7,19 +7,35 @@ require_once dirname(__DIR__) . '/config/config.php';
 Auth::requireLogin();
 
 $ambientes = Ubicacion::ambientes();
-$estantes = Ubicacion::estantes();
 $seleccionAmbiente = getQuery('ambiente_id');
 $seleccionEstante = getQuery('estante_id');
 
-$estantesFiltrados = $seleccionAmbiente ? Ubicacion::estantes((int)$seleccionAmbiente) : $estantes;
-$niveles = $seleccionEstante ? Ubicacion::niveles((int)$seleccionEstante) : [];
+// Determinar los estantes visibles segun el filtro de ambiente
+if ($seleccionAmbiente) {
+    $estantesFiltrados = Ubicacion::estantes((int) $seleccionAmbiente);
+} else {
+    $estantesFiltrados = Ubicacion::estantes();
+}
+
 $cajas = [];
 
-if (!empty($niveles)) {
+if ($seleccionEstante) {
+    // Estante concreto: cajas de todos sus niveles
+    $niveles = Ubicacion::niveles((int) $seleccionEstante);
     foreach ($niveles as $nivel) {
-        $nivelCajas = Ubicacion::cajas($nivel['id']);
-        $cajas = array_merge($cajas, $nivelCajas);
+        $cajas = array_merge($cajas, Ubicacion::cajas($nivel['id']));
     }
+} elseif ($seleccionAmbiente) {
+    // Ambiente concreto: cajas de todos sus estantes/niveles
+    foreach ($estantesFiltrados as $estante) {
+        $niveles = Ubicacion::niveles($estante['id']);
+        foreach ($niveles as $nivel) {
+            $cajas = array_merge($cajas, Ubicacion::cajas($nivel['id']));
+        }
+    }
+} else {
+    // Sin filtros: todas las cajas
+    $cajas = Ubicacion::todasLasCajas();
 }
 
 $pageTitle = 'Consulta de Ubicaciones';
@@ -98,11 +114,19 @@ ob_start();
         </div>
     </div>
 </div>
-<?php elseif ($seleccionEstante): ?>
+<?php elseif ($seleccionAmbiente || $seleccionEstante): ?>
 <div class="card" style="margin-top:16px;">
     <div class="card-body">
         <div class="empty-state">
-            <p>No hay cajas registradas para este estante.</p>
+            <p>No hay cajas registradas para este filtro.</p>
+        </div>
+    </div>
+</div>
+<?php else: ?>
+<div class="card" style="margin-top:16px;">
+    <div class="card-body">
+        <div class="empty-state">
+            <p>No hay cajas registradas en el archivo.</p>
         </div>
     </div>
 </div>
