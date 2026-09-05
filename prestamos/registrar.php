@@ -48,9 +48,21 @@ if (isPost()) {
         ];
 
         if (empty($data['solicitante_nombre'])) $errors[] = 'El nombre del solicitante es obligatorio.';
+        if (mb_strlen($data['solicitante_nombre']) > 150) $errors[] = 'El nombre del solicitante es demasiado largo.';
+        if (!empty($data['solicitante_area']) && mb_strlen($data['solicitante_area']) > 150) $errors[] = 'El área solicitante es demasiado larga.';
+        if (!empty($data['motivo']) && mb_strlen($data['motivo']) > 500) $errors[] = 'El motivo es demasiado largo.';
+        if (!empty($data['estado_documento_salida']) && mb_strlen($data['estado_documento_salida']) > 200) $errors[] = 'El estado del documento es demasiado largo.';
+        if (!empty($data['observaciones']) && mb_strlen($data['observaciones']) > 500) $errors[] = 'Las observaciones son demasiado largas.';
         if (empty($data['fecha_devolucion_estimada'])) $errors[] = 'La fecha estimada de devolución es obligatoria.';
+        elseif (!esFechaValida($data['fecha_devolucion_estimada'])) $errors[] = 'La fecha estimada de devolución no es válida.';
+        if (!esFechaValida($data['fecha_salida'])) $errors[] = 'La fecha de salida no es válida.';
+        if (!esHoraValida($data['hora_salida'])) $errors[] = 'La hora de salida no es válida.';
         if (!empty($data['solicitante_dni']) && strlen($data['solicitante_dni']) > 8) $errors[] = 'El DNI debe tener como máximo 8 caracteres.';
         if (!empty($data['solicitante_dni']) && !ctype_digit($data['solicitante_dni'])) $errors[] = 'El DNI debe contener solo números.';
+        if (esFechaValida($data['fecha_devolucion_estimada']) && esFechaValida($data['fecha_salida']) &&
+            strtotime($data['fecha_devolucion_estimada']) < strtotime($data['fecha_salida'])) {
+            $errors[] = 'La fecha de devolución no puede ser anterior a la fecha de salida.';
+        }
 
         if (empty($errors)) {
             $prestamoId = Prestamo::create($data);

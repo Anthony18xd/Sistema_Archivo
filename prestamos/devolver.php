@@ -36,6 +36,25 @@ if (isPost()) {
         ];
 
         if (empty($errors)) {
+            if (!esFechaValida($data['fecha_devolucion_real'])) {
+                $errors[] = 'La fecha de devolución no es válida.';
+            }
+            if (!esHoraValida($data['hora_devolucion_real'])) {
+                $errors[] = 'La hora de devolución no es válida.';
+            }
+            if ($prestamo && esFechaValida($data['fecha_devolucion_real']) &&
+                strtotime($data['fecha_devolucion_real']) < strtotime($prestamo['fecha_salida'])) {
+                $errors[] = 'La fecha de devolución no puede ser anterior a la fecha de salida.';
+            }
+            if (!empty($data['estado_documento_entrada']) && mb_strlen($data['estado_documento_entrada']) > 200) {
+                $errors[] = 'El estado del documento es demasiado largo.';
+            }
+            if (!empty($data['observaciones']) && mb_strlen($data['observaciones']) > 500) {
+                $errors[] = 'Las observaciones son demasiado largas.';
+            }
+        }
+
+        if (empty($errors)) {
             $result = Prestamo::devolver($pId, $data);
             if ($result) {
                 Documento::update($prestamo['documento_id'], [

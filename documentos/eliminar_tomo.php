@@ -7,8 +7,16 @@ require_once dirname(__DIR__) . '/config/config.php';
 Auth::requireLogin();
 
 $volver = SITE_URL . '/documentos/listar.php';
-if (isset($_POST['volver']) && str_starts_with($_POST['volver'], SITE_URL)) {
-    $volver = $_POST['volver'];
+if (isset($_POST['volver'])) {
+    $candidato = trim($_POST['volver']);
+    // Evitar salto de cabecera (CRLF) y redireccion a sitios externos.
+    if (preg_match('/[\r\n\0]/', $candidato)) {
+        $candidato = '';
+    }
+    $path = parse_url($candidato, PHP_URL_PATH) ?: '';
+    if ($path && str_starts_with($path, '/documentos/')) {
+        $volver = $candidato;
+    }
 }
 
 // Solo administradores

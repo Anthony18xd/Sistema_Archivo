@@ -16,7 +16,6 @@
  */
 
 error_reporting(E_ALL);
-ini_set('display_errors', '1');
 
 // Pestanas que representan cabecera de tomo y pestanas de documentos.
 // Se definen a nivel global para que funcionen tanto en CLI como en Web.
@@ -59,7 +58,7 @@ if ($isCLI) {
 // ── MODO WEB ───────────────────────────────────────────────
 require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/vendor/autoload.php';
-Auth::requireLogin();
+Auth::requireAdmin();
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
@@ -67,8 +66,15 @@ use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 // ── PROCESAMIENTO POST ─────────────────────────────────────
 $resultados = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_FILES['archivos_excel'])) {
+    if (!verifyCSRF()) {
+        Audit::registrar(Auth::id(), 'importacion_denegada', null, null, 'Importación rechazada: token CSRF inválido');
+        flash('danger', 'Token de seguridad inválido. Intente de nuevo.');
+        redirect(SITE_URL . '/importar.php');
+    }
+
     $usuarioId = Auth::id();
     $archivosTmp = [];
+    $erroresArchivo = [];
 
     foreach ($_FILES['archivos_excel']['tmp_name'] as $idx => $tmp) {
         if ($tmp && is_uploaded_file($tmp)) {
@@ -77,11 +83,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_FILES['archivos_excel'])) 
             if (strpos($nombre, '~$') === 0) {
                 continue;
             }
-            $destino = sys_get_temp_dir() . '/archivo_import_' . uniqid() . '_' . basename($nombre);
+
+            // Validar extension permitida
+            $ext = strtolower(pathinfo($nombre, PATHINFO_EXTENSION));
+            if (!in_array($ext, ['xlsx', 'xls', 'xlsm'], true)) {
+                $erroresArchivo[] = "El archivo '{$nombre}' tiene una extensión no permitida (.xlsx, .xls, .xlsm).";
+                continue;
+            }
+
+            // Validar tamaño (max 20 MB)
+            if ((int) $_FILES['archivos_excel']['size'][$idx] > 20 * 1024 * 1024) {
+                $erroresArchivo[] = "El archivo '{$nombre}' supera el tamaño máximo de 20 MB.";
+                continue;
+            }
+
+            $destino = sys_get_temp_dir() . '/archivo_import_' . uniqid() . '_' . md5($nombre . microtime()) . '.' . $ext;
             if (move_uploaded_file($tmp, $destino)) {
                 $archivosTmp[$nombre] = $destino;
+            } else {
+                $erroresArchivo[] = "No se pudo guardar el archivo '{$nombre}'.";
             }
         }
+    }
+
+    if (!empty($erroresArchivo)) {
+        flash('danger', implode(' ', $erroresArchivo));
+        redirect(SITE_URL . '/importar.php');
     }
 
     if (!empty($archivosTmp)) {

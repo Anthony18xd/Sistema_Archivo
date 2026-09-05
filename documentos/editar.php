@@ -43,8 +43,31 @@ if (isPost()) {
         ];
 
         if (empty($data['codigo'])) $errors[] = 'El código es obligatorio.';
+        if (strlen($data['codigo']) > 50) $errors[] = 'El código no puede superar 50 caracteres.';
         if (empty($data['asunto'])) $errors[] = 'El asunto es obligatorio.';
+        if (strlen($data['asunto']) > 500) $errors[] = 'El asunto no puede superar 500 caracteres.';
         if (empty($data['anio'])) $errors[] = 'El año es obligatorio.';
+        elseif (!esEnteroOpcional($data['anio'], 1900, (int) date('Y') + 1)) {
+            $errors[] = 'El año ingresado no es válido (1900 - ' . date('Y') . ').';
+        }
+        if (!esUnoDe($data['estado'], ['disponible', 'prestado', 'en_revision', 'inactivo'])) {
+            $errors[] = 'El estado no es válido.';
+        }
+        if (!esEnteroOpcional($data['num_folios'], 0, 100000)) {
+            $errors[] = 'El número de folios no es válido.';
+        }
+        if (!empty($data['area_emisora_id']) && !existeRegistro('areas', 'id', (int) $data['area_emisora_id'])) {
+            $errors[] = 'El área emisora seleccionada no es válida.';
+        }
+        if (!empty($data['area_custodio_id']) && !existeRegistro('areas', 'id', (int) $data['area_custodio_id'])) {
+            $errors[] = 'El área custodio seleccionada no es válida.';
+        }
+        if (!empty($data['tipo_documento_id']) && !existeRegistro('tipos_documento', 'id', (int) $data['tipo_documento_id'])) {
+            $errors[] = 'El tipo de documento seleccionado no es válido.';
+        }
+        if (!empty($data['caja_id']) && !existeRegistro('cajas', 'id', (int) $data['caja_id'])) {
+            $errors[] = 'La caja seleccionada no es válida.';
+        }
 
         if (!empty($data['codigo']) && Documento::existeCodigo($data['codigo'], (int)$id)) {
             $errors[] = 'El código ya está registrado por otro documento.';

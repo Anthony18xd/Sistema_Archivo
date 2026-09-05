@@ -18,16 +18,23 @@ if (isPost()) {
         if ($actionType === 'crear_ambiente') {
             $nombre = getPost('nombre');
             if (empty($nombre)) $errors[] = 'El nombre es obligatorio.';
-            elseif (Ubicacion::ambienteById(0)) { }
+            elseif (mb_strlen($nombre) > 100) $errors[] = 'El nombre del ambiente es demasiado largo.';
 
-            Ubicacion::crearAmbiente(['nombre' => $nombre, 'descripcion' => getPost('descripcion')]);
-            Audit::registrar(Auth::id(), 'ubicacion_creacion', 'ambientes', null, "Ambiente creado: {$nombre}");
-            flash('success', 'Ambiente creado.');
-            redirect(SITE_URL . '/ubicaciones/administrar.php?action=list');
+            if (empty($errors)) {
+                Ubicacion::crearAmbiente(['nombre' => $nombre, 'descripcion' => getPost('descripcion')]);
+                Audit::registrar(Auth::id(), 'ubicacion_creacion', 'ambientes', null, "Ambiente creado: {$nombre}");
+                flash('success', 'Ambiente creado.');
+                redirect(SITE_URL . '/ubicaciones/administrar.php?action=list');
+            }
 
         } elseif ($actionType === 'crear_estante') {
             $data = ['ambiente_id' => getPostInt('ambiente_id'), 'codigo' => getPost('codigo'), 'nombre' => getPost('nombre'), 'descripcion' => getPost('descripcion')];
             if (empty($data['codigo']) || empty($data['nombre'])) $errors[] = 'Código y nombre son obligatorios.';
+            if (mb_strlen($data['codigo']) > 20) $errors[] = 'El código del estante es demasiado largo.';
+            if (mb_strlen($data['nombre']) > 100) $errors[] = 'El nombre del estante es demasiado largo.';
+            if (!existeRegistro('ambientes', 'id', (int) $data['ambiente_id'])) {
+                $errors[] = 'El ambiente seleccionado no es válido.';
+            }
             if (empty($errors)) {
                 Ubicacion::crearEstante($data);
                 Audit::registrar(Auth::id(), 'ubicacion_creacion', 'estantes', null, "Estante creado: {$data['codigo']}");
@@ -38,6 +45,11 @@ if (isPost()) {
         } elseif ($actionType === 'crear_caja') {
             $data = ['nivel_id' => getPostInt('nivel_id'), 'numero' => getPostInt('numero'), 'codigo' => getPost('codigo'), 'descripcion' => getPost('descripcion'), 'capacidad' => getPostInt('capacidad')];
             if (empty($data['numero'])) $errors[] = 'El número de caja es obligatorio.';
+            elseif ($data['numero'] <= 0) $errors[] = 'El número de caja debe ser positivo.';
+            if ($data['capacidad'] <= 0) $errors[] = 'La capacidad debe ser un número positivo.';
+            if (!existeRegistro('niveles', 'id', (int) $data['nivel_id'])) {
+                $errors[] = 'El nivel seleccionado no es válido.';
+            }
             if (empty($errors)) {
                 Ubicacion::crearCaja($data);
                 Audit::registrar(Auth::id(), 'ubicacion_creacion', 'cajas', null, "Caja creada en nivel {$data['nivel_id']}");

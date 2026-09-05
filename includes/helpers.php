@@ -128,3 +128,75 @@ function jsonResponse(array $data, int $code = 200): void {
 function formatNumber(int $number): string {
     return number_format($number, 0, ',', '.');
 }
+
+/**
+ * Valida que un valor pertenezca a un listado permitido (whitelist).
+ */
+function esUnoDe($valor, array $permitidos): bool {
+    return in_array($valor, $permitidos, true);
+}
+
+/**
+ * Valida una fecha en formato YYYY-MM-DD.
+ */
+function esFechaValida(string $fecha): bool {
+    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)) {
+        return false;
+    }
+    $d = DateTime::createFromFormat('Y-m-d', $fecha);
+    return $d && $d->format('Y-m-d') === $fecha;
+}
+
+/**
+ * Valida una hora en formato HH:MM.
+ */
+function esHoraValida(string $hora): bool {
+    return preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/', $hora) === 1;
+}
+
+/**
+ * Valida que un valor sea entero opcional dentro de un rango.
+ * Devuelve true si $valor está vacío (opcional) o es un entero en [min, max].
+ */
+function esEnteroOpcional($valor, int $min, int $max): bool {
+    if ($valor === '' || $valor === null) {
+        return true;
+    }
+    if (!preg_match('/^\d+$/', (string) $valor)) {
+        return false;
+    }
+    $n = (int) $valor;
+    return $n >= $min && $n <= $max;
+}
+
+/**
+ * Valida un nombre de usuario (letras, numeros, punto, guion, guion bajo).
+ */
+function validarUsername(string $username): bool {
+    return preg_match('/^[a-zA-Z0-9._-]{3,50}$/', $username) === 1;
+}
+
+/**
+ * Verifica que una ID exista en la tabla indicada (validación server-side
+ * de campos ocultos/selects que el cliente pudo manipular en DevTools).
+ */
+function existeRegistro(string $tabla, string $columna, int $id): bool {
+    static $cache = [];
+    $key = "{$tabla}.{$columna}.{$id}";
+    if (isset($cache[$key])) {
+        return $cache[$key];
+    }
+    $permitidas = [
+        'roles' => ['id'], 'areas' => ['id'], 'tipos_documento' => ['id'],
+        'cajas' => ['id'], 'ambientes' => ['id'], 'estantes' => ['id'],
+        'niveles' => ['id'], 'usuarios' => ['id'], 'documentos' => ['id'],
+        'tomos' => ['id_tomo'], 'prestamos' => ['id'],
+    ];
+    if (!isset($permitidas[$tabla]) || !in_array($columna, $permitidas[$tabla], true)) {
+        return false;
+    }
+    $sql = "SELECT COUNT(*) FROM `{$tabla}` WHERE `{$columna}` = :id LIMIT 1";
+    $stmt = db()->prepare($sql);
+    $stmt->execute([':id' => $id]);
+    return $cache[$key] = (int) $stmt->fetchColumn() > 0;
+}

@@ -4,6 +4,7 @@
  * API AJAX - Obtener niveles de un estante
  */
 require_once dirname(__DIR__) . '/config/config.php';
+Auth::requireLogin();
 header('Content-Type: application/json; charset=utf-8');
 
 $estanteId = (int) ($_GET['estante_id'] ?? 0);

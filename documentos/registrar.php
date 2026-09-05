@@ -72,6 +72,20 @@ if (isPost()) {
             }
         }
 
+        // Validacion por fila: toda fila con datos debe tener asunto
+        if (is_array($asuntos) && is_array($solicitantes)) {
+            foreach ($solicitantes as $i => $s) {
+                $s = trim($s);
+                $f = trim($folios[$i] ?? '');
+                $e = trim($expedientes[$i] ?? '');
+                $a = trim($asuntos[$i] ?? '');
+                if (empty($a) && ($s !== '' || $f !== '' || $e !== '')) {
+                    $errors[] = 'Cada documento debe tener un asunto. Complete o quite la fila sin asunto.';
+                    break;
+                }
+            }
+        }
+
         if (empty($errors)) {
             // Construir lista de documentos
             if (is_array($solicitantes)) {

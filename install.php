@@ -27,7 +27,8 @@
     <h1>Sistema de Archivo Municipal - Instalación</h1>
 
     <?php
-    $host = 'localhost';
+    // $host = 'localhost';
+    $host = '172.40.15.59';
     $user = 'root';
     $pass = '';
     $dbName = 'archivo_municipal';

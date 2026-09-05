@@ -29,7 +29,7 @@ if (isPost()) {
                 'telefono'  => getPost('telefono'),
                 'username'  => getPost('username'),
                 'password'  => getPost('password'),
-                'estado'    => getPost('estado', 1)
+                'estado'    => (int) getPost('estado', 1)
             ];
 
             if (empty($data['nombres'])) $errors[] = 'Los nombres son obligatorios.';
@@ -41,6 +41,12 @@ if (isPost()) {
             if (!empty($data['telefono']) && strlen($data['telefono']) > 9) $errors[] = 'El teléfono debe tener como máximo 9 caracteres.';
             if (!empty($data['dni']) && !ctype_digit($data['dni'])) $errors[] = 'El DNI debe contener solo números.';
             if (!empty($data['telefono']) && !ctype_digit($data['telefono'])) $errors[] = 'El teléfono debe contener solo números.';
+            if (!empty($data['email']) && !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) $errors[] = 'El email no es válido.';
+            if (!validarUsername($data['username'])) $errors[] = 'El usuario solo puede contener letras, números, punto, guion o guion bajo (3-50 caracteres).';
+            if (!esUnoDe($data['estado'], [0, 1])) $errors[] = 'El estado no es válido.';
+            if (!esEnteroOpcional($data['rol_id'], 1, 9999) || !existeRegistro('roles', 'id', (int) $data['rol_id'])) {
+                $errors[] = 'El rol seleccionado no es válido.';
+            }
 
             if (!empty($data['username']) && Usuario::existsUsername($data['username'])) {
                 $errors[] = 'El nombre de usuario ya existe.';
@@ -59,6 +65,10 @@ if (isPost()) {
             }
         } elseif ($action === 'editar') {
             $userId = getPostInt('user_id');
+            $target = Usuario::findById($userId);
+            if (!$target) {
+                $errors[] = 'El usuario a editar no existe.';
+            }
             $data = [
                 'rol_id'    => getPost('rol_id'),
                 'nombres'   => getPost('nombres'),
@@ -67,19 +77,36 @@ if (isPost()) {
                 'email'     => getPost('email'),
                 'telefono'  => getPost('telefono'),
                 'username'  => getPost('username'),
-                'estado'    => getPost('estado', 1)
+                'estado'    => (int) getPost('estado', 1)
             ];
             $password = getPost('password');
             if (!empty($password)) {
                 $data['password'] = $password;
+                if (strlen($password) < 6) $errors[] = 'La contraseña debe tener al menos 6 caracteres.';
             }
 
             if (empty($data['nombres'])) $errors[] = 'Los nombres son obligatorios.';
             if (empty($data['username'])) $errors[] = 'El usuario es obligatorio.';
+            if (!validarUsername($data['username'])) $errors[] = 'El usuario solo puede contener letras, números, punto, guion o guion bajo (3-50 caracteres).';
             if (!empty($data['dni']) && strlen($data['dni']) > 8) $errors[] = 'El DNI debe tener como máximo 8 caracteres.';
             if (!empty($data['telefono']) && strlen($data['telefono']) > 9) $errors[] = 'El teléfono debe tener como máximo 9 caracteres.';
             if (!empty($data['dni']) && !ctype_digit($data['dni'])) $errors[] = 'El DNI debe contener solo números.';
             if (!empty($data['telefono']) && !ctype_digit($data['telefono'])) $errors[] = 'El teléfono debe contener solo números.';
+            if (!empty($data['email']) && !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) $errors[] = 'El email no es válido.';
+            if (!esUnoDe($data['estado'], [0, 1])) $errors[] = 'El estado no es válido.';
+            if (!esEnteroOpcional($data['rol_id'], 1, 9999) || !existeRegistro('roles', 'id', (int) $data['rol_id'])) {
+                $errors[] = 'El rol seleccionado no es válido.';
+            }
+
+            // Impedir que un admin se desactive a si mismo o cambie su propio rol (evita encierro).
+            if ($target && $userId === Auth::id()) {
+                if ($data['estado'] === 0) {
+                    $errors[] = 'No puede desactivar su propia cuenta.';
+                }
+                if ((int) $data['rol_id'] !== (int) $target['rol_id'] && $target['rol_id'] == 1) {
+                    $errors[] = 'No puede cambiar su propio rol de administrador.';
+                }
+            }
 
             if (!empty($data['username']) && Usuario::existsUsername($data['username'], $userId)) {
                 $errors[] = 'El nombre de usuario ya existe.';

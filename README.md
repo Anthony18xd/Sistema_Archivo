@@ -56,7 +56,7 @@ define('DB_PASS', '');
 
 Tienes dos opciones equivalentes:
 
-**Opción A — Instalador web:** inicia el servidor (paso 4) y abre `http://localhost:8080/install.php`, luego pulsa **Ejecutar Instalación**. Este script crea la base de datos y carga los datos iniciales.
+**Opción A — Instalador web:** inicia el servidor (paso 4) y abre `http://172.40.15.59:8080/install.php`, luego pulsa **Ejecutar Instalación**. Este script crea la base de datos y carga los datos iniciales.
 
 **Opción B — Manual con línea de comandos:**
 
@@ -73,14 +73,15 @@ mysql -h 127.0.0.1 -u root -p archivo_municipal < database/seed.sql
 **Opción A — Servidor PHP integrado (recomendado):**
 
 ```bash
-php -S localhost:8080 -t .
+# php -S localhost:8080 -t .
+php -S 172.40.15.59:8080 -t .
 ```
 
-**Opción B — XAMPP / WAMP / LAMP:** copia la carpeta del proyecto dentro de `htdocs` (XAMPP) o `www` (WAMP) y accede desde `http://localhost/Sistema_Archivo`.
+**Opción B — XAMPP / WAMP / LAMP:** copia la carpeta del proyecto dentro de `htdocs` (XAMPP) o `www` (WAMP) y accede desde `http://172.40.15.59/Sistema_Archivo` (`http://localhost/Sistema_Archivo` de forma local).
 
 ### 5. Acceder al sistema
 
-Abre en tu navegador: `http://localhost:8080`
+Abre en tu navegador: `http://172.40.15.59:8080`
 
 **Credenciales por defecto:**
 
