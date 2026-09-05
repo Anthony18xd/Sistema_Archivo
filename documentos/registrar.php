@@ -16,6 +16,15 @@ $success = '';
 $areas = Area::findAll();
 $tipos = TipoDocumento::findAll();
 
+// El sistema es del archivo: todo documento que llega se registra en el
+// área Archivo por defecto.
+$areaPorDefecto = 'Archivo';
+$areasTomo = Tomo::areas();
+if (!in_array($areaPorDefecto, $areasTomo, true)) {
+    array_unshift($areasTomo, $areaPorDefecto);
+}
+$areaSeleccionada = trim(getPost('area', $areaPorDefecto));
+
 if (isPost()) {
     if (!verifyCSRF()) {
         $errors[] = 'Token de seguridad inválido.';
@@ -176,9 +185,8 @@ ob_start();
                     <label for="area">Área / Dependencia <span class="required">*</span></label>
                     <select name="area" id="area" class="form-control"
                             data-requerido="Seleccione el área o escriba una nueva.">
-                        <option value="">Seleccionar o escribir...</option>
-                        <?php foreach (Tomo::areas() as $areaEx): ?>
-                        <option value="<?= sanitize($areaEx) ?>" <?= getPost('area') === $areaEx ? 'selected' : '' ?>>
+                        <?php foreach ($areasTomo as $areaEx): if (trim($areaEx) === '') continue; ?>
+                        <option value="<?= sanitize($areaEx) ?>" <?= $areaSeleccionada === trim($areaEx) ? 'selected' : '' ?>>
                             <?= sanitize($areaEx) ?>
                         </option>
                         <?php endforeach; ?>
